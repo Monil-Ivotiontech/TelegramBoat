@@ -52,17 +52,6 @@
           }
         }
       },
-      "LibWkHtmlToX-32/0.12.6.1": {
-        "type": "package",
-        "contentFiles": {
-          "contentFiles/any/any/libwkhtmltox.dll": {
-            "buildAction": "None",
-            "codeLanguage": "any",
-            "copyToOutput": true,
-            "outputPath": "libwkhtmltox.dll"
-          }
-        }
-      },
       "libwkhtmltox-64/1.0.0": {
         "type": "package",
         "compile": {
@@ -1980,18 +1969,6 @@
         "lib/netstandard2.1/EPPlus.xml",
         "license.md",
         "readme.txt"
-      ]
-    },
-    "LibWkHtmlToX-32/0.12.6.1": {
-      "sha512": "c/cZYKXSsv6IqUxk6ko/nj2paoK2aNcwpxmIAuylTH5kLJ2RbowMGZrbQbu7dFVglAa8f+k8rodrdXEMSvw2zA==",
-      "type": "package",
-      "path": "libwkhtmltox-32/0.12.6.1",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "contentFiles/any/any/libwkhtmltox.dll",
-        "libwkhtmltox-32.0.12.6.1.nupkg.sha512",
-        "libwkhtmltox-32.nuspec"
       ]
     },
     "libwkhtmltox-64/1.0.0": {
@@ -6621,7 +6598,6 @@
     "net8.0": [
       "DinkToPdf >= 1.0.8",
       "EPPlus >= 5.6.4",
-      "LibWkHtmlToX-32 >= 0.12.6.1",
       "Swashbuckle.AspNetCore >= 6.4.0",
       "libwkhtmltox-64 >= 1.0.0"
     ]
@@ -6683,10 +6659,6 @@
           "EPPlus": {
             "target": "Package",
             "version": "[5.6.4, )"
-          },
-          "LibWkHtmlToX-32": {
-            "target": "Package",
-            "version": "[0.12.6.1, )"
           },
           "Swashbuckle.AspNetCore": {
             "target": "Package",

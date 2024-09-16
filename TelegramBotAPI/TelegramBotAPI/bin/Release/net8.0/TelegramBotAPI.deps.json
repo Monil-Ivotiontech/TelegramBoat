@@ -10,7 +10,6 @@
         "dependencies": {
           "DinkToPdf": "1.0.8",
           "EPPlus": "5.6.4",
-          "LibWkHtmlToX-32": "0.12.6.1",
           "Swashbuckle.AspNetCore": "6.4.0",
           "libwkhtmltox-64": "1.0.0"
         },
@@ -58,7 +57,6 @@
           }
         }
       },
-      "LibWkHtmlToX-32/0.12.6.1": {},
       "libwkhtmltox-64/1.0.0": {
         "runtime": {
           "lib/libwkhtmltox.dll": {
@@ -1034,13 +1032,6 @@
       "sha512": "sha512-JpkTI30hZnNcXis/EEbVE0dflVQD8MXrEMEt2HGZsmdIKnMw1ezqeHlbCIpvyWGNjFLizpZKd3nMoFuJWtrNIw==",
       "path": "epplus/5.6.4",
       "hashPath": "epplus.5.6.4.nupkg.sha512"
-    },
-    "LibWkHtmlToX-32/0.12.6.1": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-c/cZYKXSsv6IqUxk6ko/nj2paoK2aNcwpxmIAuylTH5kLJ2RbowMGZrbQbu7dFVglAa8f+k8rodrdXEMSvw2zA==",
-      "path": "libwkhtmltox-32/0.12.6.1",
-      "hashPath": "libwkhtmltox-32.0.12.6.1.nupkg.sha512"
     },
     "libwkhtmltox-64/1.0.0": {
       "type": "package",
