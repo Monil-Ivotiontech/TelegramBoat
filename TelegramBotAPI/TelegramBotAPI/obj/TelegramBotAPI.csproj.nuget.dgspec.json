@@ -58,6 +58,14 @@
               "target": "Package",
               "version": "[5.6.4, )"
             },
+            "Haukcode.WkHtmlToPdfDotNet": {
+              "target": "Package",
+              "version": "[1.5.93, )"
+            },
+            "LibWkHtmlToX-32": {
+              "target": "Package",
+              "version": "[0.12.6.1, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.4.0, )"

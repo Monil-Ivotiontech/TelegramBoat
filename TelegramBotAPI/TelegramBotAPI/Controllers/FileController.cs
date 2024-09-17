@@ -4,7 +4,6 @@ using OfficeOpenXml;
 using DinkToPdf;
 using DinkToPdf.Contracts;
 using System.Data;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Globalization;
 using System.Text;
 

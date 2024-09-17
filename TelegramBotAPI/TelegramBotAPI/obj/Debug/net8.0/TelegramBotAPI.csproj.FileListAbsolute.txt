@@ -7,7 +7,6 @@ C:\Users\Aditya\source\repos\Monil-Ivotiontech\TelegramBoat\TelegramBotAPI\Teleg
 C:\Users\Aditya\source\repos\Monil-Ivotiontech\TelegramBoat\TelegramBotAPI\TelegramBotAPI\bin\Debug\net8.0\TelegramBotAPI.pdb
 C:\Users\Aditya\source\repos\Monil-Ivotiontech\TelegramBoat\TelegramBotAPI\TelegramBotAPI\bin\Debug\net8.0\DinkToPdf.dll
 C:\Users\Aditya\source\repos\Monil-Ivotiontech\TelegramBoat\TelegramBotAPI\TelegramBotAPI\bin\Debug\net8.0\EPPlus.dll
-C:\Users\Aditya\source\repos\Monil-Ivotiontech\TelegramBoat\TelegramBotAPI\TelegramBotAPI\bin\Debug\net8.0\libwkhtmltox.dll
 C:\Users\Aditya\source\repos\Monil-Ivotiontech\TelegramBoat\TelegramBotAPI\TelegramBotAPI\bin\Debug\net8.0\Microsoft.IO.RecyclableMemoryStream.dll
 C:\Users\Aditya\source\repos\Monil-Ivotiontech\TelegramBoat\TelegramBotAPI\TelegramBotAPI\bin\Debug\net8.0\Microsoft.OpenApi.dll
 C:\Users\Aditya\source\repos\Monil-Ivotiontech\TelegramBoat\TelegramBotAPI\TelegramBotAPI\bin\Debug\net8.0\Microsoft.Win32.SystemEvents.dll
@@ -41,3 +40,11 @@ C:\Users\Aditya\source\repos\Monil-Ivotiontech\TelegramBoat\TelegramBotAPI\Teleg
 C:\Users\Aditya\source\repos\Monil-Ivotiontech\TelegramBoat\TelegramBotAPI\TelegramBotAPI\obj\Debug\net8.0\TelegramBotAPI.pdb
 C:\Users\Aditya\source\repos\Monil-Ivotiontech\TelegramBoat\TelegramBotAPI\TelegramBotAPI\obj\Debug\net8.0\TelegramBotAPI.genruntimeconfig.cache
 C:\Users\Aditya\source\repos\Monil-Ivotiontech\TelegramBoat\TelegramBotAPI\TelegramBotAPI\obj\Debug\net8.0\ref\TelegramBotAPI.dll
+C:\Users\Aditya\source\repos\Monil-Ivotiontech\TelegramBoat\TelegramBotAPI\TelegramBotAPI\bin\Debug\net8.0\libwkhtmltox.dll
+C:\Users\Aditya\source\repos\Monil-Ivotiontech\TelegramBoat\TelegramBotAPI\TelegramBotAPI\bin\Debug\net8.0\runtimes\win-x64\native\wkhtmltox.dll
+C:\Users\Aditya\source\repos\Monil-Ivotiontech\TelegramBoat\TelegramBotAPI\TelegramBotAPI\bin\Debug\net8.0\runtimes\win-x86\native\wkhtmltox.dll
+C:\Users\Aditya\source\repos\Monil-Ivotiontech\TelegramBoat\TelegramBotAPI\TelegramBotAPI\bin\Debug\net8.0\WkHtmlToPdfDotNet.dll
+C:\Users\Aditya\source\repos\Monil-Ivotiontech\TelegramBoat\TelegramBotAPI\TelegramBotAPI\bin\Debug\net8.0\runtimes\linux-arm64\native\libwkhtmltox.so
+C:\Users\Aditya\source\repos\Monil-Ivotiontech\TelegramBoat\TelegramBotAPI\TelegramBotAPI\bin\Debug\net8.0\runtimes\linux-x64\native\libwkhtmltox.so
+C:\Users\Aditya\source\repos\Monil-Ivotiontech\TelegramBoat\TelegramBotAPI\TelegramBotAPI\bin\Debug\net8.0\runtimes\linux-x86\native\libwkhtmltox.so
+C:\Users\Aditya\source\repos\Monil-Ivotiontech\TelegramBoat\TelegramBotAPI\TelegramBotAPI\bin\Debug\net8.0\runtimes\osx-x64\native\libwkhtmltox.dylib
