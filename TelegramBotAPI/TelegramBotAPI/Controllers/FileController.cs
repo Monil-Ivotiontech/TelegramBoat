@@ -38,7 +38,9 @@ namespace TelegramBotAPI.Controllers
                 var paramsDt = parameter1.Split('_');
                 var paramText = paramsDt[0].Trim();
                 var FromDate = DateTime.Parse(paramsDt[1].Trim());
+                FromDate = FromDate.AddMinutes(-2);
                 var ToDate = DateTime.Parse(paramsDt[2].Trim());
+                ToDate = ToDate.AddMinutes(2);
                 DataTable dt = new DataTable();
                 dt.Columns.Add("FileName");
                 dt.Columns.Add("CreatedDateTime", typeof(DateTime));
@@ -65,15 +67,19 @@ namespace TelegramBotAPI.Controllers
 
                 DataView view = dt.DefaultView;
                 view.Sort = "CreatedDateTime DESC";
-                string formattedDateFrom = DateTime.Today.ToString("MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
-                view.RowFilter = $"CreatedDateTime >= #{formattedDateFrom}#";
+                string formattedDateFrom = FromDate.ToString("MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                string formattedDateTo = ToDate.ToString("MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                //view.RowFilter = $"CreatedDateTime >= #{formattedDateFrom}# AND CreatedDateTime <= #{formattedDateTo}#";
 
-                DataTable sortedDate = view.ToTable();
+                //DataTable sortedDate = view.ToTable();
 
                 if (paramText == "M2M EXCEL")
                 {
-                    dt.DefaultView.RowFilter = "FileName like '%M2M%'";
-                    dt = dt.DefaultView.ToTable();
+                    view.RowFilter = $"CreatedDateTime >= #{formattedDateFrom}# AND CreatedDateTime <= #{formattedDateTo}# AND FileName like '%M2M%'";
+                    dt = view.ToTable();
+
+                    //dt.DefaultView.RowFilter = "FileName like '%M2M%'";
+                    //dt = dt.DefaultView.ToTable();
 
                     if (dt.Rows.Count > 1)
                     {
@@ -87,8 +93,11 @@ namespace TelegramBotAPI.Controllers
                 }
                 else if (paramText == "UPDATE EXCEL")
                 {
-                    dt.DefaultView.RowFilter = "FileName like '%UPDATE ALL%'";
-                    dt = dt.DefaultView.ToTable();
+                    view.RowFilter = $"CreatedDateTime >= #{formattedDateFrom}# AND CreatedDateTime <= #{formattedDateTo}# AND FileName like '%UPDATE ALL%'";
+                    dt = view.ToTable();
+
+                    //dt.DefaultView.RowFilter = "FileName like '%UPDATE ALL%'";
+                    //dt = dt.DefaultView.ToTable();
 
                     if (dt.Rows.Count > 1)
                     {
@@ -96,14 +105,14 @@ namespace TelegramBotAPI.Controllers
                         string FileName2 = dt.Rows[1][0].ToString();
                         dt = new DataTable();
                         dt = FileUpdateExcel(FileName1, FileName2);
-
                     }
-
                 }
                 else if (paramText == "COM POS")
                 {
-                    dt.DefaultView.RowFilter = "FileName like '%COM POS%'";
-                    dt = dt.DefaultView.ToTable();
+                    view.RowFilter = $"CreatedDateTime >= #{formattedDateFrom}# AND CreatedDateTime <= #{formattedDateTo}# AND FileName like '%COM POS%'";
+                    //dt.DefaultView.RowFilter = "FileName like '%COM POS%'";
+                    dt = view.ToTable();
+                    //dt = dt.DefaultView.ToTable();
 
                     if (dt.Rows.Count > 1)
                     {
@@ -127,7 +136,7 @@ namespace TelegramBotAPI.Controllers
 
                 // Convert the accumulated content to PDF
                 var pdfBytes = ConvertHtmlToPdf(pdfContent);
-                parameter1 = parameter1.Replace(" ", "") + "_" + DateTime.Now.ToString("ddMMyyyyHHmmss");
+                parameter1 = paramText.Replace(" ", "") + "_" + DateTime.Now.ToString("ddMMyyyyHHmmss");
                 // Return PDF as bytes
                 return File(pdfBytes, "application/pdf", $"{parameter1}.pdf");
             }
@@ -492,25 +501,14 @@ namespace TelegramBotAPI.Controllers
                 dtCMX.Columns.Add("Symbol");
                 dtCMX.Columns.Add("Type");
                 dtCMX.Columns.Add("Volume");
-                dtCMX.Columns.Add("Avg. Price");
-                dtCMX.Columns.Add("Cur. Price");
-                dtCMX.Columns.Add("Profit & Loss");
                 dtCMX.Columns.Add("Holding Volume");
                 dtCMX.Columns.Add("Diff. in Holding Volume");
-
-
 
                 DataTable dtCMX1 = new DataTable();
                 dtCMX1.Columns.Add("Symbol");
                 dtCMX1.Columns.Add("Type");
                 dtCMX1.Columns.Add("Volume");
-                dtCMX1.Columns.Add("Avg. Price");
-                dtCMX1.Columns.Add("Cur. Price");
-                dtCMX1.Columns.Add("Profit & Loss");
                 dtCMX1.Columns.Add("Holding Volume");
-
-
-
 
                 ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
                 string destinationFilePath = Path.Combine(_folderPath, "");
@@ -528,24 +526,28 @@ namespace TelegramBotAPI.Controllers
                         dtCMX.Rows.Add();
                         for (int col = 1; col <= worksheet.Dimension.Columns; col++)
                         {
-                            if (Convert.ToString(worksheet.Cells[row, col].Value) == "MCX" || Convert.ToString(worksheet.Cells[row, col].Value) == "STOCKS")
+                            if (col < 5)
                             {
-                                dtCMX.Rows[dtCMX.Rows.Count - 1][col - 1] = Convert.ToString(worksheet.Cells[row, col].Value);
-                                row = row + 1;
-                                col = worksheet.Dimension.Columns + 1;
-                                continue;
+                                if (Convert.ToString(worksheet.Cells[row, col].Value) == "MCX" || Convert.ToString(worksheet.Cells[row, col].Value) == "STOCKS")
+                                {
+                                    dtCMX.Rows[dtCMX.Rows.Count - 1][col - 1] = Convert.ToString(worksheet.Cells[row, col].Value);
+                                    row = row + 1;
+                                    col = worksheet.Dimension.Columns + 1;
+                                    continue;
+                                }
+
+                                var dl = Convert.ToString(worksheet.Cells[row, col].Value);
+                                if (decimal.TryParse(dl, out decimal decimalValue))
+                                {
+                                    int intValue = Convert.ToInt32(decimalValue);
+                                    dtCMX.Rows[dtCMX.Rows.Count - 1][col - 1] = intValue;
+                                }
+                                else
+                                {
+                                    dtCMX.Rows[dtCMX.Rows.Count - 1][col - 1] = worksheet.Cells[row, col].Value;
+                                }
                             }
 
-                            var dl = Convert.ToString(worksheet.Cells[row, col].Value);
-                            if (decimal.TryParse(dl, out decimal decimalValue))
-                            {
-                                int intValue = Convert.ToInt32(decimalValue);
-                                dtCMX.Rows[dtCMX.Rows.Count - 1][col - 1] = intValue;
-                            }
-                            else
-                            {
-                                dtCMX.Rows[dtCMX.Rows.Count - 1][col - 1] = worksheet.Cells[row, col].Value;
-                            }
                         }
                     }
                 }
@@ -561,25 +563,27 @@ namespace TelegramBotAPI.Controllers
                         dtCMX1.Rows.Add();
                         for (int col = 1; col <= worksheet.Dimension.Columns; col++)
                         {
-                            if (Convert.ToString(worksheet.Cells[row, col].Value) == "MCX" || Convert.ToString(worksheet.Cells[row, col].Value) == "STOCKS")
+                            if (col < 5)
                             {
-                                dtCMX.Rows[dtCMX.Rows.Count - 1][col - 1] = Convert.ToString(worksheet.Cells[row, col].Value);
-                                row = row + 1;
-                                col = worksheet.Dimension.Columns + 1;
-                                continue;
+                                if (Convert.ToString(worksheet.Cells[row, col].Value) == "MCX" || Convert.ToString(worksheet.Cells[row, col].Value) == "STOCKS")
+                                {
+                                    dtCMX.Rows[dtCMX.Rows.Count - 1][col - 1] = Convert.ToString(worksheet.Cells[row, col].Value);
+                                    row = row + 1;
+                                    col = worksheet.Dimension.Columns + 1;
+                                    continue;
+                                }
+                                var dl = Convert.ToString(worksheet.Cells[row, col].Value);
+                                //var dl = worksheet.Cells[row, col].Value.ToString();
+                                if (decimal.TryParse(dl, out decimal decimalValue))
+                                {
+                                    int intValue = Convert.ToInt32(decimalValue);
+                                    dtCMX1.Rows[dtCMX1.Rows.Count - 1][col - 1] = intValue;
+                                }
+                                else
+                                {
+                                    dtCMX1.Rows[dtCMX1.Rows.Count - 1][col - 1] = worksheet.Cells[row, col].Value;
+                                }
                             }
-                            var dl = Convert.ToString(worksheet.Cells[row, col].Value);
-                            //var dl = worksheet.Cells[row, col].Value.ToString();
-                            if (decimal.TryParse(dl, out decimal decimalValue))
-                            {
-                                int intValue = Convert.ToInt32(decimalValue);
-                                dtCMX1.Rows[dtCMX1.Rows.Count - 1][col - 1] = intValue;
-                            }
-                            else
-                            {
-                                dtCMX1.Rows[dtCMX1.Rows.Count - 1][col - 1] = worksheet.Cells[row, col].Value;
-                            }
-
                         }
                     }
                 }
@@ -588,7 +592,7 @@ namespace TelegramBotAPI.Controllers
                 {
                     dtCMX1.DefaultView.RowFilter = "Symbol='" + dtCMX.Rows[i][0] + "'";
                     if (dtCMX1.DefaultView.ToTable().Rows.Count > 0)
-                        UpdateDataTable(dtCMX, "Symbol='" + dtCMX.Rows[i][0] + "'", 6, dtCMX1.DefaultView.Table.Rows[0][2]);
+                        UpdateDataTable(dtCMX, "Symbol='" + dtCMX.Rows[i][0] + "'", 3, dtCMX1.DefaultView.Table.Rows[0][2]);
                 }
                 return dtCMX;
             }
@@ -690,6 +694,7 @@ namespace TelegramBotAPI.Controllers
             // Update the specified column for each selected row
             foreach (DataRow row in rows)
             {
+                if (row[columnIndex] == "") row[columnIndex] = "0";
                 row[columnIndex + 1] = Convert.ToInt32(newValue) - Convert.ToInt32(row[columnIndex]);
             }
         }
