@@ -83,8 +83,8 @@ namespace TelegramBotAPI.Controllers
 
                     if (dt.Rows.Count > 1)
                     {
-                        string FileName1 = dt.Rows[0][0].ToString();
-                        string FileName2 = dt.Rows[1][0].ToString();
+                        string FileName1 = dt.Rows[1][0].ToString();
+                        string FileName2 = dt.Rows[0][0].ToString();
                         dt = new DataTable();
                         dt = M2M(FileName1, FileName2);
 
@@ -101,8 +101,8 @@ namespace TelegramBotAPI.Controllers
 
                     if (dt.Rows.Count > 1)
                     {
-                        string FileName1 = dt.Rows[0][0].ToString();
-                        string FileName2 = dt.Rows[1][0].ToString();
+                        string FileName1 = dt.Rows[1][0].ToString();
+                        string FileName2 = dt.Rows[0][0].ToString();
                         dt = new DataTable();
                         dt = FileUpdateExcel(FileName1, FileName2);
                     }
@@ -116,8 +116,8 @@ namespace TelegramBotAPI.Controllers
 
                     if (dt.Rows.Count > 1)
                     {
-                        string FileName1 = dt.Rows[0][0].ToString();
-                        string FileName2 = dt.Rows[1][0].ToString();
+                        string FileName1 = dt.Rows[1][0].ToString();
+                        string FileName2 = dt.Rows[0][0].ToString();
                         dt = new DataTable();
                         dt = COMPOS(FileName1, FileName2);
 
@@ -499,10 +499,16 @@ namespace TelegramBotAPI.Controllers
             {
                 DataTable dtCMX = new DataTable();
                 dtCMX.Columns.Add("Symbol");
-                dtCMX.Columns.Add("Type");
-                dtCMX.Columns.Add("Volume");
-                dtCMX.Columns.Add("Holding Volume");
-                dtCMX.Columns.Add("Diff. in Holding Volume");
+                dtCMX.Columns.Add("Type-1");
+                dtCMX.Columns.Add("Volume-1");
+                dtCMX.Columns.Add("Holding Volume-1");
+                dtCMX.Columns.Add("Type-2");
+                dtCMX.Columns.Add("Volume-2");
+                dtCMX.Columns.Add("Holding Volume-2");
+                dtCMX.Columns.Add("Type-Diff");
+                dtCMX.Columns.Add("Volume-Diff");
+                dtCMX.Columns.Add("Holding Volume-Diff");
+
 
                 DataTable dtCMX1 = new DataTable();
                 dtCMX1.Columns.Add("Symbol");
@@ -592,7 +598,37 @@ namespace TelegramBotAPI.Controllers
                 {
                     dtCMX1.DefaultView.RowFilter = "Symbol='" + dtCMX.Rows[i][0] + "'";
                     if (dtCMX1.DefaultView.ToTable().Rows.Count > 0)
-                        UpdateDataTable(dtCMX, "Symbol='" + dtCMX.Rows[i][0] + "'", 3, dtCMX1.DefaultView.Table.Rows[0][2]);
+                    {
+                        DataRow[] rows = dtCMX1.Select("Symbol='" + dtCMX.Rows[i][0] + "'");
+
+                        // Update the specified column for each selected row
+                        dtCMX.Rows[i][4] = rows[0].ItemArray[1];
+                        dtCMX.Rows[i][5] = rows[0].ItemArray[2];
+                        dtCMX.Rows[i][6] = rows[0].ItemArray[3];
+                        dtCMX.Rows[i][8] = Convert.ToInt32(dtCMX.Rows[i][2]) - Convert.ToInt32(dtCMX.Rows[i][5]);
+                        if (!string.IsNullOrEmpty(dtCMX.Rows[i][3].ToString()))
+                        {
+                            dtCMX.Rows[i][9] = Convert.ToInt32(dtCMX.Rows[i][3]) - Convert.ToInt32(dtCMX.Rows[i][6]);
+                        }
+                        
+                        if (Convert.ToString(dtCMX.Rows[i][8]) != "")
+                        {
+                            if (Convert.ToInt32(dtCMX.Rows[i][8]) < 0)
+                            {
+                                dtCMX.Rows[i][7] = "SELL";
+                            }
+                            else
+                            {
+                                dtCMX.Rows[i][7] = "BUY";
+                            }
+                        }
+
+                        //foreach (DataRow row in rows)
+                        //{
+                        //    row[columnIndex + 1] = Convert.ToInt32(newValue) - Convert.ToInt32(row[columnIndex]);
+                        //}
+                    }
+                    //UpdateDataTable(dtCMX, "Symbol='" + dtCMX.Rows[i][0] + "'", 3, dtCMX1.DefaultView.Table.Rows[0][2], "COMPOS");
                 }
                 return dtCMX;
             }
@@ -609,7 +645,8 @@ namespace TelegramBotAPI.Controllers
                 DataTable dt = new DataTable();
                 dt.Columns.Add("Master");
                 dt.Columns.Add("Name");
-                dt.Columns.Add("Per & Loss");
+                dt.Columns.Add("Per & Loss - 1");
+                dt.Columns.Add("Per & Loss - 2");
                 dt.Columns.Add("Difference in Per&Loss");
 
                 DataTable dt1 = new DataTable();
@@ -676,7 +713,18 @@ namespace TelegramBotAPI.Controllers
                 for (int i = 0; i <= dt.Rows.Count - 1; i++)
                 {
                     dt1.DefaultView.RowFilter = "Master='" + dt.Rows[i][0] + "'";
-                    UpdateDataTable(dt, "Master='" + dt.Rows[i][0] + "'", 2, dt1.DefaultView.Table.Rows[0][2]);
+                    
+                    if (dt1.DefaultView.ToTable().Rows.Count > 0)
+                    {
+                        DataRow[] rows = dt1.Select("Master='" + dt.Rows[i][0] + "'");
+
+                        // Update the specified column for each selected row
+                        dt.Rows[i][3] = rows[0].ItemArray[2];
+                        if (dt.Rows[i][2] == "") dt.Rows[i][2] = "0";
+                        if (dt.Rows[i][3] == "") dt.Rows[i][3] = "0";
+                        dt.Rows[i][4] = Convert.ToInt32(dt.Rows[i][3]) - Convert.ToInt32(dt.Rows[i][2]); ;
+                    }
+                    //UpdateDataTable(dt, "Master='" + dt.Rows[i][0] + "'", 2, dt1.DefaultView.Table.Rows[0][2]);
                 }
                 return dt;
             }
@@ -686,7 +734,7 @@ namespace TelegramBotAPI.Controllers
                 throw ex;
             }
         }
-        static void UpdateDataTable(DataTable table, string filterExpression, int columnIndex, object newValue)
+        static void UpdateDataTable(DataTable table, string filterExpression, int columnIndex, object newValue, string FileType = "")
         {
             // Select rows that match the filter expression
             DataRow[] rows = table.Select(filterExpression);
@@ -696,6 +744,22 @@ namespace TelegramBotAPI.Controllers
             {
                 if (row[columnIndex] == "") row[columnIndex] = "0";
                 row[columnIndex + 1] = Convert.ToInt32(newValue) - Convert.ToInt32(row[columnIndex]);
+                if (FileType == "COMPOS")
+                {
+
+                    if (Convert.ToString(row[1]) != "")
+                    {
+                        if (Convert.ToInt32(row[columnIndex + 1]) < 0)
+                        {
+                            row[columnIndex + 1] = "<b>" + row[columnIndex + 1] + "</b>";
+                            row[1] = "SELL";
+                        }
+                        else
+                        {
+                            row[1] = "BUY";
+                        }
+                    }
+                }
             }
         }
     }
