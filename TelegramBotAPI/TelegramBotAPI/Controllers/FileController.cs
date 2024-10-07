@@ -32,7 +32,7 @@ namespace TelegramBotAPI.Controllers
                 {
                     return NotFound("Folder not found.");
                 }
-
+                bool isLandscape = false;
                 // Get all files in the folder
                 var files = Directory.GetFiles(folderPath);
                 var paramsDt = parameter1.Split('_');
@@ -83,6 +83,7 @@ namespace TelegramBotAPI.Controllers
 
                     if (dt.Rows.Count > 1)
                     {
+                        isLandscape = true;
                         string FileName1 = dt.Rows[1][0].ToString();
                         string FileName2 = dt.Rows[0][0].ToString();
                         dt = new DataTable();
@@ -135,7 +136,7 @@ namespace TelegramBotAPI.Controllers
 
 
                 // Convert the accumulated content to PDF
-                var pdfBytes = ConvertHtmlToPdf(pdfContent);
+                var pdfBytes = ConvertHtmlToPdf(pdfContent, isLandscape);
                 parameter1 = paramText.Replace(" ", "") + "_" + DateTime.Now.ToString("ddMMyyyyHHmmss");
                 // Return PDF as bytes
                 return File(pdfBytes, "application/pdf", $"{parameter1}.pdf");
@@ -245,7 +246,7 @@ namespace TelegramBotAPI.Controllers
 
         }
 
-        private byte[] ConvertHtmlToPdf(string htmlContent)
+        private byte[] ConvertHtmlToPdf(string htmlContent, bool islandscap = false)
         {
             try
             {
@@ -253,7 +254,7 @@ namespace TelegramBotAPI.Controllers
                 {
                     ColorMode = ColorMode.Color,
                     PaperSize = PaperKind.A4,
-                    Orientation = Orientation.Portrait,
+                    Orientation = islandscap ? Orientation.Landscape : Orientation.Portrait,
                 };
                 var dt = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
                 var objectSettings = new ObjectSettings
@@ -294,23 +295,27 @@ namespace TelegramBotAPI.Controllers
                 DataTable dt = new DataTable();
                 dt.Columns.Add("Login");
                 dt.Columns.Add("Name");
-                dt.Columns.Add("Per (%)");
-                dt.Columns.Add("Credit");
-                dt.Columns.Add("Credit (%)");
-                dt.Columns.Add("M2M");
-                dt.Columns.Add("Partner");
-                dt.Columns.Add("Net Amount");
-                dt.Columns.Add("Diff in Net Amt");
+                dt.Columns.Add("Per (%)-1");
+                dt.Columns.Add("M2M-1");
+                dt.Columns.Add("Partner-1");
+                dt.Columns.Add("Net Amount-1");
+                dt.Columns.Add("Per (%)-2");
+                dt.Columns.Add("M2M-2");
+                dt.Columns.Add("Partner-2");
+                dt.Columns.Add("Net Amount-2");
+                dt.Columns.Add("Diff. Per (%)");
+                dt.Columns.Add("Diff. M2M");
+                dt.Columns.Add("Diff. Partner");
+                dt.Columns.Add("Diff. Net Amount");
 
                 DataTable dt1 = new DataTable();
                 dt1.Columns.Add("Login");
                 dt1.Columns.Add("Name");
                 dt1.Columns.Add("Per (%)");
-                dt1.Columns.Add("Credit");
-                dt1.Columns.Add("Credit (%)");
                 dt1.Columns.Add("M2M");
                 dt1.Columns.Add("Partner");
                 dt1.Columns.Add("Net Amount");
+
 
                 ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
                 string destinationFilePath = Path.Combine(_folderPath, "");
@@ -328,18 +333,39 @@ namespace TelegramBotAPI.Controllers
                         dt.Rows.Add();
                         for (int col = 1; col <= worksheet.Dimension.Columns; col++)
                         {
+                            //if (col == 4 || col == 5) continue;
                             var dl = worksheet.Cells[row, col].Value.ToString();
                             var pr = dl.Replace("%", "").ToString();
                             if (decimal.TryParse(pr, out decimal decimalValue))
                             {
-                                int intValue = Convert.ToInt32(decimalValue);
+                                decimal intValue = Convert.ToDecimal(decimalValue);
                                 if (dl.Contains("%"))
                                 {
                                     dt.Rows[dt.Rows.Count - 1][col - 1] = intValue + " %";
                                 }
                                 else
                                 {
-                                    dt.Rows[dt.Rows.Count - 1][col - 1] = intValue;
+                                    if (col == 4 || col == 5)
+                                    {
+
+                                    }
+                                    else if (col == 6)
+                                    {
+                                        dt.Rows[dt.Rows.Count - 1][3] = intValue.ToString("N2");
+                                    }
+                                    else if (col == 7)
+                                    {
+                                        dt.Rows[dt.Rows.Count - 1][4] = intValue.ToString("N2");
+                                    }
+                                    else if (col == 8)
+                                    {
+                                        dt.Rows[dt.Rows.Count - 1][5] = intValue.ToString("N2");
+                                    }
+                                    else
+                                    {
+                                        dt.Rows[dt.Rows.Count - 1][col - 1] = intValue;
+                                    }
+
                                 }
                             }
                             else
@@ -362,11 +388,44 @@ namespace TelegramBotAPI.Controllers
                         for (int col = 1; col <= worksheet.Dimension.Columns; col++)
                         {
                             var dl = worksheet.Cells[row, col].Value.ToString();
-                            if (decimal.TryParse(dl, out decimal decimalValue))
+                            var pr = dl.Replace("%", "").ToString();
+                            if (decimal.TryParse(pr, out decimal decimalValue))
                             {
-                                int intValue = Convert.ToInt32(decimalValue);
-                                dt1.Rows[dt1.Rows.Count - 1][col - 1] = intValue;
+                                decimal intValue = Convert.ToDecimal(decimalValue);
+                                if (dl.Contains("%"))
+                                {
+                                    dt1.Rows[dt1.Rows.Count - 1][col - 1] = intValue + " %";
+                                }
+                                else
+                                {
+                                    if (col == 4 || col == 5)
+                                    {
+
+                                    }
+                                    else if (col == 6)
+                                    {
+                                        dt1.Rows[dt1.Rows.Count - 1][3] = intValue.ToString("N2");
+                                    }
+                                    else if (col == 7)
+                                    {
+                                        dt1.Rows[dt1.Rows.Count - 1][4] = intValue.ToString("N2");
+                                    }
+                                    else if (col == 8)
+                                    {
+                                        dt1.Rows[dt1.Rows.Count - 1][5] = intValue.ToString("N2");
+                                    }
+                                    else
+                                    {
+                                        dt1.Rows[dt1.Rows.Count - 1][col - 1] = intValue;
+                                    }
+
+                                }
                             }
+                            //if (decimal.TryParse(dl, out decimal decimalValue))
+                            //{
+                            //    int intValue = Convert.ToInt32(decimalValue);
+                            //    dt1.Rows[dt1.Rows.Count - 1][col - 1] = intValue;
+                            //}
                             else
                             {
                                 dt1.Rows[dt1.Rows.Count - 1][col - 1] = worksheet.Cells[row, col].Value;
@@ -378,7 +437,31 @@ namespace TelegramBotAPI.Controllers
                 for (int i = 0; i <= dt.Rows.Count - 1; i++)
                 {
                     dt1.DefaultView.RowFilter = "Login=" + dt.Rows[i][0];
-                    UpdateDataTable(dt, "Login='" + Convert.ToInt64(dt.Rows[i][0]) + "'", 7, dt1.DefaultView.Table.Rows[0][7]);
+
+                    if (dt1.DefaultView.ToTable().Rows.Count > 0)
+                    {
+                        DataRow[] rows = dt1.Select("Login='" + dt.Rows[i][0] + "'");
+
+                        // Update the specified column for each selected row
+                        dt.Rows[i][6] = rows[0].ItemArray[2];
+                        dt.Rows[i][7] = rows[0].ItemArray[3];
+                        dt.Rows[i][8] = rows[0].ItemArray[4];
+                        dt.Rows[i][9] = rows[0].ItemArray[5];
+
+                        dt.Rows[i][10] = Convert.ToDecimal(dt.Rows[i][2].ToString().Replace("%", "")) - Convert.ToDecimal(dt.Rows[i][6].ToString().Replace("%", "")) + "%";
+                        dt.Rows[i][11] = (Convert.ToDecimal(dt.Rows[i][3]) - Convert.ToDecimal(dt.Rows[i][7])).ToString("N2");
+                        dt.Rows[i][12] = (Convert.ToDecimal(dt.Rows[i][4]) - Convert.ToDecimal(dt.Rows[i][8])).ToString("N2");
+                        dt.Rows[i][13] = (Convert.ToDecimal(dt.Rows[i][5]) - Convert.ToDecimal(dt.Rows[i][9])).ToString("N2");
+
+
+                        //if (!string.IsNullOrEmpty(dt.Rows[i][3].ToString()))
+                        //{
+                        //    dt.Rows[i][9] = Convert.ToInt32(dt.Rows[i][3]) - Convert.ToInt32(dt.Rows[i][6]);
+                        //}
+
+
+                        //UpdateDataTable(dt, "Login='" + Convert.ToInt64(dt.Rows[i][0]) + "'", 7, dt1.DefaultView.Table.Rows[0][7]);
+                    }
                 }
                 return dt;
             }
@@ -610,7 +693,7 @@ namespace TelegramBotAPI.Controllers
                         {
                             dtCMX.Rows[i][9] = Convert.ToInt32(dtCMX.Rows[i][3]) - Convert.ToInt32(dtCMX.Rows[i][6]);
                         }
-                        
+
                         if (Convert.ToString(dtCMX.Rows[i][8]) != "")
                         {
                             if (Convert.ToInt32(dtCMX.Rows[i][8]) < 0)
@@ -713,7 +796,7 @@ namespace TelegramBotAPI.Controllers
                 for (int i = 0; i <= dt.Rows.Count - 1; i++)
                 {
                     dt1.DefaultView.RowFilter = "Master='" + dt.Rows[i][0] + "'";
-                    
+
                     if (dt1.DefaultView.ToTable().Rows.Count > 0)
                     {
                         DataRow[] rows = dt1.Select("Master='" + dt.Rows[i][0] + "'");
