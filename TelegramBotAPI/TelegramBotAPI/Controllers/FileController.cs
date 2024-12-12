@@ -636,6 +636,19 @@ namespace TelegramBotAPI.Controllers
                                     dtCMX.Rows[dtCMX.Rows.Count - 1][col - 1] = worksheet.Cells[row, col].Value;
                                 }
                             }
+                            else if (col == 7)
+                            {
+                                var dl = Convert.ToString(worksheet.Cells[row, col].Value);
+                                if (decimal.TryParse(dl, out decimal decimalValue))
+                                {
+                                    int intValue = Convert.ToInt32(decimalValue);
+                                    dtCMX.Rows[dtCMX.Rows.Count - 1][3] = intValue;
+                                }
+                                else
+                                {
+                                    dtCMX.Rows[dtCMX.Rows.Count - 1][3] = worksheet.Cells[row, col].Value;
+                                }
+                            }
 
                         }
                     }
@@ -665,12 +678,25 @@ namespace TelegramBotAPI.Controllers
                                 //var dl = worksheet.Cells[row, col].Value.ToString();
                                 if (decimal.TryParse(dl, out decimal decimalValue))
                                 {
-                                    int intValue = Convert.ToInt32(decimalValue);
+                                    decimal intValue = Convert.ToDecimal(decimalValue);
                                     dtCMX1.Rows[dtCMX1.Rows.Count - 1][col - 1] = intValue;
                                 }
                                 else
                                 {
                                     dtCMX1.Rows[dtCMX1.Rows.Count - 1][col - 1] = worksheet.Cells[row, col].Value;
+                                }
+                            }
+                            else if (col == 7)
+                            {
+                                var dl = Convert.ToString(worksheet.Cells[row, col].Value);
+                                if (decimal.TryParse(dl, out decimal decimalValue))
+                                {
+                                    decimal intValue = Convert.ToDecimal(decimalValue);
+                                    dtCMX1.Rows[dtCMX1.Rows.Count - 1][3] = intValue;
+                                }
+                                else
+                                {
+                                    dtCMX1.Rows[dtCMX1.Rows.Count - 1][3] = worksheet.Cells[row, col].Value;
                                 }
                             }
                         }
@@ -686,17 +712,17 @@ namespace TelegramBotAPI.Controllers
 
                         // Update the specified column for each selected row
                         dtCMX.Rows[i][4] = rows[0].ItemArray[1];
-                        dtCMX.Rows[i][5] = rows[0].ItemArray[2];
-                        dtCMX.Rows[i][6] = rows[0].ItemArray[3];
-                        dtCMX.Rows[i][8] = Convert.ToInt32(dtCMX.Rows[i][2]) - Convert.ToInt32(dtCMX.Rows[i][5]);
+                        dtCMX.Rows[i][5] = Convert.ToDecimal(rows[0].ItemArray[2]).ToString("N2");
+                        dtCMX.Rows[i][6] = Convert.ToDecimal(rows[0].ItemArray[3]).ToString("N2");
+                        dtCMX.Rows[i][8] = (Convert.ToDecimal(dtCMX.Rows[i][2]) - Convert.ToDecimal(dtCMX.Rows[i][5])).ToString("N2");
                         if (!string.IsNullOrEmpty(dtCMX.Rows[i][3].ToString()))
                         {
-                            dtCMX.Rows[i][9] = Convert.ToInt32(dtCMX.Rows[i][3]) - Convert.ToInt32(dtCMX.Rows[i][6]);
+                            dtCMX.Rows[i][9] = (Convert.ToDecimal(dtCMX.Rows[i][3]) - Convert.ToDecimal(dtCMX.Rows[i][6])).ToString("N2");
                         }
 
                         if (Convert.ToString(dtCMX.Rows[i][8]) != "")
                         {
-                            if (Convert.ToInt32(dtCMX.Rows[i][8]) < 0)
+                            if (Convert.ToDecimal(dtCMX.Rows[i][8]) < 0)
                             {
                                 dtCMX.Rows[i][7] = "SELL";
                             }
