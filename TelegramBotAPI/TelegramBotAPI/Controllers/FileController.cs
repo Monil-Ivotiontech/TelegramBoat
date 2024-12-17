@@ -94,7 +94,7 @@ namespace TelegramBotAPI.Controllers
                 }
                 else if (paramText == "UPDATE EXCEL")
                 {
-                    view.RowFilter = $"CreatedDateTime >= #{formattedDateFrom}# AND CreatedDateTime <= #{formattedDateTo}# AND FileName like '%UPDATE ALL%'";
+                    view.RowFilter = $"CreatedDateTime >= #{formattedDateFrom}# AND CreatedDateTime <= #{formattedDateTo}# AND FileName like '%UPDATE EXCEL%'";
                     dt = view.ToTable();
 
                     //dt.DefaultView.RowFilter = "FileName like '%UPDATE ALL%'";
