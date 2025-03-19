@@ -73,9 +73,9 @@ namespace TelegramBotAPI.Controllers
 
                 //DataTable sortedDate = view.ToTable();
 
-                if (paramText == "M2M EXCEL")
+                if (paramText == "M2M EXCEL" || paramText == "11000")
                 {
-                    view.RowFilter = $"CreatedDateTime >= #{formattedDateFrom}# AND CreatedDateTime <= #{formattedDateTo}# AND FileName like '%M2M%'";
+                    view.RowFilter = $"CreatedDateTime >= #{formattedDateFrom}# AND CreatedDateTime <= #{formattedDateTo}# AND FileName like '%M2M%' OR FileName like '%11000%'";
                     dt = view.ToTable();
 
                     //dt.DefaultView.RowFilter = "FileName like '%M2M%'";
