@@ -1,0 +1,17 @@
+E:\IvotionTech\Project\Harsh\bin\Debug\net8.0-windows\Harsh.exe
+E:\IvotionTech\Project\Harsh\bin\Debug\net8.0-windows\Harsh.dll.config
+E:\IvotionTech\Project\Harsh\bin\Debug\net8.0-windows\Harsh.deps.json
+E:\IvotionTech\Project\Harsh\bin\Debug\net8.0-windows\Harsh.runtimeconfig.json
+E:\IvotionTech\Project\Harsh\bin\Debug\net8.0-windows\Harsh.dll
+E:\IvotionTech\Project\Harsh\bin\Debug\net8.0-windows\Harsh.pdb
+E:\IvotionTech\Project\Harsh\obj\Debug\net8.0-windows\Harsh.Form1.resources
+E:\IvotionTech\Project\Harsh\obj\Debug\net8.0-windows\Harsh.csproj.GenerateResource.cache
+E:\IvotionTech\Project\Harsh\obj\Debug\net8.0-windows\Harsh.GeneratedMSBuildEditorConfig.editorconfig
+E:\IvotionTech\Project\Harsh\obj\Debug\net8.0-windows\Harsh.AssemblyInfoInputs.cache
+E:\IvotionTech\Project\Harsh\obj\Debug\net8.0-windows\Harsh.AssemblyInfo.cs
+E:\IvotionTech\Project\Harsh\obj\Debug\net8.0-windows\Harsh.csproj.CoreCompileInputs.cache
+E:\IvotionTech\Project\Harsh\obj\Debug\net8.0-windows\Harsh.dll
+E:\IvotionTech\Project\Harsh\obj\Debug\net8.0-windows\refint\Harsh.dll
+E:\IvotionTech\Project\Harsh\obj\Debug\net8.0-windows\Harsh.pdb
+E:\IvotionTech\Project\Harsh\obj\Debug\net8.0-windows\Harsh.genruntimeconfig.cache
+E:\IvotionTech\Project\Harsh\obj\Debug\net8.0-windows\ref\Harsh.dll

@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Harsh", "Harsh.csproj", "{3B10AC95-034A-4ECA-B2B2-73553FB1B8CB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HarshReport", "..\HarshReport\HarshReport.csproj", "{D66EA6A6-D58C-4FD2-9887-05D86B974D23}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "HarshSetup", "..\HarshSetup\HarshSetup.vdproj", "{081585F6-8299-4713-9A8A-D906A8F4DF21}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3B10AC95-034A-4ECA-B2B2-73553FB1B8CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B10AC95-034A-4ECA-B2B2-73553FB1B8CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B10AC95-034A-4ECA-B2B2-73553FB1B8CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B10AC95-034A-4ECA-B2B2-73553FB1B8CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D66EA6A6-D58C-4FD2-9887-05D86B974D23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D66EA6A6-D58C-4FD2-9887-05D86B974D23}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D66EA6A6-D58C-4FD2-9887-05D86B974D23}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D66EA6A6-D58C-4FD2-9887-05D86B974D23}.Release|Any CPU.Build.0 = Release|Any CPU
+		{081585F6-8299-4713-9A8A-D906A8F4DF21}.Debug|Any CPU.ActiveCfg = Debug
+		{081585F6-8299-4713-9A8A-D906A8F4DF21}.Release|Any CPU.ActiveCfg = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {82502C93-00B1-4821-94EE-33129E56235B}
+	EndGlobalSection
+EndGlobal
