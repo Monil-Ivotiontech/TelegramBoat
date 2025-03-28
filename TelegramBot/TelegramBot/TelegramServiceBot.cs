@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 using Telegram.Bot.Types.InputFiles;
 using Telegram.Bot.Types;
 using Telegram.Bot;
@@ -19,19 +14,18 @@ namespace TelegramBot
         private static BotSettings _botSettings;
         private static TelegramBotClient _botClient;
         private static readonly HttpClient httpClient = new HttpClient();
+        private static CancellationTokenSource cancellationToken;
         public TelegramServiceBot(IOptions<BotSettings> botSettings)
         {
             _botSettings = botSettings.Value;
 
             // Initialize Telegram Bot Client using the Token from appsettings.json
             _botClient = new TelegramBotClient(_botSettings.Token);
+            cancellationToken = new CancellationTokenSource();
         }
         public async Task StartBot()
         {
-
-
             // Set up an event handler to listen for messages
-            var cancellationToken = new CancellationTokenSource();
 
             var receiverOptions = new ReceiverOptions
             {
@@ -118,11 +112,48 @@ namespace TelegramBot
 
         }
 
-        private static Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
+        private static async Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {
             Console.WriteLine($"Polling error: {exception.Message}");
-            throw exception;
+
+            // Log the error and restart the bot
+            await Task.Delay(5000); // Wait for 5 seconds before restarting
+            Console.WriteLine("Restarting bot...");
+
+            await RestartBot();
 
         }
+
+
+        private static async Task RestartBot()
+        {
+            try
+            {
+                // Cancel existing token and create a new one
+                cancellationToken.Cancel();
+                cancellationToken = new CancellationTokenSource();
+
+                var receiverOptions = new ReceiverOptions
+                {
+                    AllowedUpdates = Array.Empty<UpdateType>() // Receive all update types
+                };
+
+                _botClient.StartReceiving(
+                    updateHandler: HandleUpdateAsync,
+                    pollingErrorHandler: HandlePollingErrorAsync,
+                    receiverOptions: receiverOptions,
+                    cancellationToken: cancellationToken.Token
+                );
+
+                Console.WriteLine("Bot restarted successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error while restarting bot: {ex.Message}");
+                await Task.Delay(5000);
+                await RestartBot(); // Retry restarting after 5 seconds
+            }
+        }
+
     }
 }
