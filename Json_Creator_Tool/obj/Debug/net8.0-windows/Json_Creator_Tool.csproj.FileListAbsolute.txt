@@ -1,0 +1,17 @@
+E:\IvotionTech\Project\Telegram_BOAT\Json_Creator_Tool\bin\Debug\net8.0-windows\Json_Creator_Tool.exe
+E:\IvotionTech\Project\Telegram_BOAT\Json_Creator_Tool\bin\Debug\net8.0-windows\Json_Creator_Tool.deps.json
+E:\IvotionTech\Project\Telegram_BOAT\Json_Creator_Tool\bin\Debug\net8.0-windows\Json_Creator_Tool.runtimeconfig.json
+E:\IvotionTech\Project\Telegram_BOAT\Json_Creator_Tool\bin\Debug\net8.0-windows\Json_Creator_Tool.dll
+E:\IvotionTech\Project\Telegram_BOAT\Json_Creator_Tool\bin\Debug\net8.0-windows\Json_Creator_Tool.pdb
+E:\IvotionTech\Project\Telegram_BOAT\Json_Creator_Tool\obj\Debug\net8.0-windows\Json_Creator_Tool.Form1.resources
+E:\IvotionTech\Project\Telegram_BOAT\Json_Creator_Tool\obj\Debug\net8.0-windows\Json_Creator_Tool.csproj.GenerateResource.cache
+E:\IvotionTech\Project\Telegram_BOAT\Json_Creator_Tool\obj\Debug\net8.0-windows\Json_Creator_Tool.GeneratedMSBuildEditorConfig.editorconfig
+E:\IvotionTech\Project\Telegram_BOAT\Json_Creator_Tool\obj\Debug\net8.0-windows\Json_Creator_Tool.AssemblyInfoInputs.cache
+E:\IvotionTech\Project\Telegram_BOAT\Json_Creator_Tool\obj\Debug\net8.0-windows\Json_Creator_Tool.AssemblyInfo.cs
+E:\IvotionTech\Project\Telegram_BOAT\Json_Creator_Tool\obj\Debug\net8.0-windows\Json_Creator_Tool.csproj.CoreCompileInputs.cache
+E:\IvotionTech\Project\Telegram_BOAT\Json_Creator_Tool\obj\Debug\net8.0-windows\Json_Creator_Tool.sourcelink.json
+E:\IvotionTech\Project\Telegram_BOAT\Json_Creator_Tool\obj\Debug\net8.0-windows\Json_Creator_Tool.dll
+E:\IvotionTech\Project\Telegram_BOAT\Json_Creator_Tool\obj\Debug\net8.0-windows\refint\Json_Creator_Tool.dll
+E:\IvotionTech\Project\Telegram_BOAT\Json_Creator_Tool\obj\Debug\net8.0-windows\Json_Creator_Tool.pdb
+E:\IvotionTech\Project\Telegram_BOAT\Json_Creator_Tool\obj\Debug\net8.0-windows\Json_Creator_Tool.genruntimeconfig.cache
+E:\IvotionTech\Project\Telegram_BOAT\Json_Creator_Tool\obj\Debug\net8.0-windows\ref\Json_Creator_Tool.dll
