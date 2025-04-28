@@ -37,9 +37,11 @@ namespace TelegramBotAPI.Controllers
                 var files = Directory.GetFiles(folderPath);
                 var paramsDt = parameter1.Split('_');
                 var paramText = paramsDt[0].Trim();
-                var FromDate = DateTime.Parse(paramsDt[1].Trim());
+                var dateFormat = "MM/dd/yyyy HH:mm";
+                var culture = CultureInfo.InvariantCulture;
+                var FromDate = DateTime.ParseExact(paramsDt[1].Trim(), dateFormat, culture);
                 FromDate = FromDate.AddMinutes(-2);
-                var ToDate = DateTime.Parse(paramsDt[2].Trim());
+                var ToDate = DateTime.ParseExact(paramsDt[2].Trim(), dateFormat, culture);
                 ToDate = ToDate.AddMinutes(2);
                 DataTable dt = new DataTable();
                 dt.Columns.Add("FileName");
@@ -67,8 +69,8 @@ namespace TelegramBotAPI.Controllers
 
                 DataView view = dt.DefaultView;
                 view.Sort = "CreatedDateTime DESC";
-                string formattedDateFrom = FromDate.ToString("MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
-                string formattedDateTo = ToDate.ToString("MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                string formattedDateFrom = FromDate.ToString(dateFormat, culture);
+                string formattedDateTo = ToDate.ToString(dateFormat, culture);
                 //view.RowFilter = $"CreatedDateTime >= #{formattedDateFrom}# AND CreatedDateTime <= #{formattedDateTo}#";
 
                 //DataTable sortedDate = view.ToTable();
