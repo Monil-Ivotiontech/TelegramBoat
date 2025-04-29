@@ -31,7 +31,7 @@ namespace TelegramBot
             {
                 AllowedUpdates = Array.Empty<UpdateType>() // receive all update types
             };
-
+            
             _botClient.StartReceiving(
                 updateHandler: HandleUpdateAsync,
                  pollingErrorHandler: HandlePollingErrorAsync,
@@ -130,9 +130,13 @@ namespace TelegramBot
             try
             {
                 // Cancel existing token and create a new one
-                cancellationToken.Cancel();
+                cancellationToken.Cancel();                
                 cancellationToken = new CancellationTokenSource();
 
+                await _botClient.DeleteWebhookAsync();
+
+                Console.WriteLine("Webhook deleted successfully.");
+                // Reinitialize the bot client
                 var receiverOptions = new ReceiverOptions
                 {
                     AllowedUpdates = Array.Empty<UpdateType>() // Receive all update types
