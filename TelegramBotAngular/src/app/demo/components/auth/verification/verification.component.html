@@ -1,0 +1,42 @@
+<!-- Toast section -->
+<p-toast></p-toast>
+
+<div class="loading-indicator" *ngIf="ProgressSpinnerDlg">
+    <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8"
+        fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+</div>
+<!-- Toast section -->
+
+<!-- Verification section -->
+<div style="background: url(../../../../../assets/images/bg-2.png) no-repeat; background-size: cover; height: 100vh; width: auto;"
+    class="px-4 py-8 md:px-6 lg:px-8">
+    <div class="px-4 py-8 md:px-6 lg:px-8 flex align-items-center justify-content-center">
+        <div class="surface-card p-4 shadow-2 border-round w-full lg:w-5 text-center my-6 relative">
+            <div class="text-center mb-3">
+                <img [src]="img_url" alt="Image" height="40" class="mb-3">
+                <div class="text-900 text-3xl font-semibold mb-2">Verification</div>
+                <span class="text-600 font-medium line-height-3">We have sent code to you email</span>
+            </div>
+            <div class="flex align-items-center w-full justify-content-center mb-5">
+                <i class="fa-duotone fa-envelope text-600 mr-2"></i>
+                <span class="text-900 font-bold"> {{ email_address }} </span>
+            </div>
+            <div class="flex flex-column">
+                <div class="flex justify-content-between w-full align-items-center mb-5 gap-3">
+                    <ng-otp-input #ngOtpInput (onInputChange)="onOtpChange($event)" *ngIf="showOtpComponent"
+                        [config]="config"></ng-otp-input>
+                </div>
+
+                <div class="flex flex-wrap gap-2 mb-3 justify-content-between">
+                    <button pButton pRipple label="Cancel" class="flex-auto p-button-outlined"
+                        [routerLink]="['/auth/login']"></button>
+                    <button pButton pRipple label="Verify" class="flex-auto" (click)="validateOtp()"></button>
+                </div>
+            </div>
+
+            <div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Verification section -->

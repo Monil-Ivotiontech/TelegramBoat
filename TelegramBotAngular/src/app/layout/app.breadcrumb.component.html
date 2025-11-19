@@ -1,0 +1,11 @@
+<nav class="layout-breadcrumb">
+    <div class="flex align-items-center">
+        <a class="cursor-pointer" routerLink="/configuration/platform">
+            <i class="fa-solid fa-home primary-text mr-2"></i>
+        </a>
+        <ng-template ngFor let-item let-last="last" [ngForOf]="breadcrumbs$ | async">
+            <a class="cursor-pointer white-space-nowrap mr-2"><i class="fa-solid fa-angle-right mr-2"></i>{{item.label}}
+            </a>
+        </ng-template>
+    </div>
+</nav>

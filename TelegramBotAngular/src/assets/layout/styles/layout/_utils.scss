@@ -1,0 +1,69 @@
+/* Utils */
+.clearfix:after {
+    content:" ";
+    display:block;
+    clear:both;
+}
+
+.card {
+    background: var(--surface-card);
+    padding: 1.25rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 1px -1px rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12);
+    border-radius: var(--border-radius);
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between; 
+    }
+
+    .card-subtitle {
+        color: var(--text-color-secondary);
+        font-weight: 600;
+        margin: -1rem 0 1rem 0;
+    }
+}
+
+.p-toast {
+    &.p-toast-top-right,
+    &.p-toast-top-left,
+    &.p-toast-top-center {
+        top: 70px;
+    }
+}
+
+
+.cdk-drag {
+    .p-progressbar {
+        height: 0.5rem;
+        
+        .p-progressbar-value {
+            border-radius: 6px;
+        }
+    }
+
+    .p-inplace {
+        .p-inplace-content {
+            .p-inputtext {
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+            }
+    
+            .p-button {
+                border-top-left-radius: 0px;
+                border-bottom-left-radius: 0px;
+                width: 3rem;
+                height: 3rem;
+            }
+        }
+
+        .p-inplace-display {
+            padding: 0;
+        }    
+    }
+}

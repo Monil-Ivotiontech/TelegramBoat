@@ -1,0 +1,50 @@
+<!-- Toast section -->
+<p-toast></p-toast>
+
+<div class="loading-indicator" *ngIf="ProgressSpinnerDlg">
+    <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8"
+        fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+</div>
+<!-- Toast section -->
+
+<!-- login screen section -->
+<div style="background: url(../../../../../assets/images/bg-2.png) no-repeat; height: 100vh; width: auto;"
+    class="min-h-screen justify-content-center align-items-center bg-cover bg-center px-4 py-8 md:px-6 lg:px-8">
+    <div class="px-4 py-8 md:px-6 lg:px-8 flex align-items-center justify-content-center">
+        <div class="surface-card p-4 shadow-2 border-round w-full lg:w-5 my-2 relative">
+            <div class="text-center mb-5">
+                <img [src]="img_url" alt="Image" height="40">
+                <div class="text-900 text-3xl font-semibold mt-3 mb-2">Welcome Back</div>
+                <span class="text-600 font-medium line-height-3">Access your Account Now! </span>
+            </div>
+
+            <form [formGroup]="loginForm" *ngIf="loginForm">
+                <div>
+                    <label for="email1" class="block text-900 font-medium mb-2 font-semibold"><i
+                            class="fa-duotone fa-envelope mr-2 text-primary"></i>Email</label>
+                    <input id="email1" type="text" pInputText class="w-full mb-3" formControlName="useremail">
+
+                    <label for="password1" class="block text-900 font-medium mb-2 font-semibold"><i
+                            class="fa-duotone fa-lock mr-2 text-primary"></i> Password</label>
+                    <input id="password1" type="password" pPassword [feedback]="false" class="w-full mb-3"
+                        formControlName="password">
+
+                    <div class="flex align-items-center justify-content-between mb-6">
+                        <div class="flex align-items-center">
+                            <p-checkbox id="rememberme" [binary]="true" styleClass="mr-2"></p-checkbox>
+                            <label for="rememberme1" class="font-semibold text-900">Remember me</label>
+                        </div>
+                        <a class="font-bold no-underline ml-2 text-blue-500 text-right cursor-pointer"
+                            (click)="forgot_password()">Forgot
+                            password?</a>
+
+                    </div>
+
+                    <button pButton pRipple label="Sign In" class="w-full font-semibold"
+                        (click)="login_admin_request()"></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- login screen section -->

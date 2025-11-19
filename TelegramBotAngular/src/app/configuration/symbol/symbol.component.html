@@ -1,0 +1,180 @@
+<!-- Global Section -->
+<p-toast></p-toast>
+
+<div class="loading-indicator" *ngIf="ProgressSpinnerDlg">
+    <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8"
+        animationDuration=".5s"></p-progressSpinner>
+</div>
+<!-- GLobal Seection -->
+
+<!-- Main Section (starts) -->
+<p-tabView styleClass="tabview-custom" (onChange)="onTabChange($event)">
+    <p-tabPanel>
+        <ng-template pTemplate="header">
+            <i class="fa-duotone fa-circle-1 mr-2"></i>
+            <span class="uppercase">Symbol</span>
+        </ng-template>
+        <ng-template pTemplate="body">
+            <p-dialog [(visible)]="add_new_symbol_dialog" appendTo="body" [modal]="true"
+                [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '35vw', height: '60vh'}"
+                [closable]="false" [showHeader]="false">
+                <div class="flex flex-column align-items-center my-4">
+                    <span
+                        class="flex align-items-center justify-content-center bg-pink-100 text-pink-800 mr-3 border-circle mb-3"
+                        style="width:64px;height:64px">
+                        <i class="pi pi-check text-5xl"></i>
+                    </span>
+                    <div class="font-bold text-xl uppercase mb-3 text-900"> Symbol Configuration </div>
+                </div>
+                <form [formGroup]="symbol_form">
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> Symbol Name </span>
+                        <input type="text" name="symbol_name" placeholder="Name" id="symbol_name" pInputText
+                            formControlName="symbol_name">
+                    </div>
+
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> Symbol Category </span>
+                        <p-dropdown [options]="symbol_catg_list" [autoDisplayFirst]="false" placeholder="Category"
+                            formControlName="symbol_catg">
+                        </p-dropdown>
+                    </div>
+                </form>
+
+                <ng-template pTemplate="footer">
+                    <div class=" border-top-1 surface-border pt-3 flex">
+                        <button pButton pRipple icon="pi pi-times" (click)="cancel_new_symbol_charges()" label="Cancel"
+                            class="p-button-outlined w-6 mr-2"></button>
+                        <button pButton pRipple icon="pi pi-check" (click)="confirm_new_symbol_charges()" label="Save"
+                            class="w-6 ml-2"></button>
+                    </div>
+                </ng-template>
+            </p-dialog>
+            <p-dialog [(visible)]="update_symbol_dialog" appendTo="body" [modal]="true"
+                [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '35vw', height: '65vh'}"
+                [closable]="false" [showHeader]="false">
+                <div class="flex flex-column align-items-center my-4">
+                    <span
+                        class="flex align-items-center justify-content-center bg-pink-100 text-pink-800 mr-3 border-circle mb-3"
+                        style="width:64px;height:64px">
+                        <i class="pi pi-check text-5xl"></i>
+                    </span>
+                    <div class="font-bold text-xl uppercase mb-3 text-900"> Update BOT Access </div>
+                </div>
+                <form [formGroup]="update_symbol_form">
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> Category </span>
+                        <p-dropdown [options]="symbol_catg_list" [autoDisplayFirst]="false" placeholder="Category"
+                            formControlName="symbol_catg">
+                        </p-dropdown>
+                    </div>
+                </form>
+
+                <ng-template pTemplate="footer">
+                    <div class=" border-top-1 surface-border pt-3 flex">
+                        <button pButton pRipple icon="pi pi-times" (click)="cancel_symbol_updation()" label="Cancel"
+                            class="p-button-outlined w-6 mr-2"></button>
+                        <button pButton pRipple icon="pi pi-check" (click)="confirm_symbol_updation()" label="Save"
+                            class="w-6 ml-2"></button>
+                    </div>
+                </ng-template>
+            </p-dialog>
+            <p-dialog [(visible)]="symbol_delete_dialog" appendTo="body" [modal]="true"
+                [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '35vw'}" [closable]="false"
+                [showHeader]="false">
+                <div class="flex flex-column align-items-center my-4">
+                    <span
+                        class="flex align-items-center justify-content-center bg-orange-100 text-orange-800 mr-3 border-circle mb-3"
+                        style="width:64px;height:64px">
+                        <i class="pi pi-check text-5xl"></i>
+                    </span>
+                    <div class="font-bold text-xl uppercase mb-3 text-900">Delete Confirmation </div>
+                    <div> Are you sure you want to delete the selected data? </div>
+                </div>
+
+                <ng-template pTemplate="footer">
+                    <div class=" border-top-1 surface-border pt-3 flex">
+                        <button pButton pRipple icon="pi pi-times" (click)="cancel_symbol_delete()" label="Cancel"
+                            class="p-button-outlined w-6 mr-2"></button>
+                        <button pButton pRipple icon="pi pi-check" (click)="confirm_symbol_delete()" label="Save"
+                            class="w-6 ml-2"></button>
+                    </div>
+                </ng-template>
+            </p-dialog>
+            <div class="grid mt-1">
+                <div class="col-12 p-0">
+                    <p-table #dt [value]="symbol_row_data" [columns]="symbol_col_header" [resizableColumns]="true"
+                        [autoLayout]="true" editMode="row" dataKey="id" [rowHover]="true" [rows]="10" [paginator]="true"
+                        responsiveLayout="scroll"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        [showCurrentPageReport]="true" [globalFilterFields]="['symbolid', 'symbol', 'category']"
+                        [filterDelay]="100">
+                        <ng-template pTemplate="caption">
+                            <div class="flex justify-content-between flex-column sm:flex-row mb-2">
+                                <h5 class="p-mb-0 p-mr-2 p-mt-1">Symbol Details</h5>
+                                <div class="flex">
+                                    <p-button icon="fa-solid fa-arrow-rotate-right"
+                                        styleClass="p-button-refresh p-button-outlined mr-2"
+                                        (click)="refreshTable()"></p-button>
+                                    <p-button pRipple label="New" icon="pi pi-plus" styleClass="p-button-primary"
+                                        (click)="new_symbol_category_detail()">
+                                    </p-button>
+                                </div>
+                            </div>
+                            <div class="flex justify-content-between flex-column sm:flex-row">
+                                <div>
+                                    <span class="p-input-icon-left">
+                                        <i class="pi pi-search"></i>
+                                        <input pInputText type="text" #filter (input)="onGlobalFilter(dt, $event)"
+                                            placeholder="Search Keyword" class="w-full" />
+                                    </span>
+                                </div>
+                                <div>
+                                    <button type="button" label="Export" pButton pRipple
+                                        icon="fa-solid fa-cloud-arrow-down" (click)="symbol_export()"
+                                        class="p-button-success"></button>
+                                </div>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <th style="width: 3rem;">Delete</th>
+                                <th style="width: 3rem;">Update</th>
+                                <th pSortableColumn="{{col}}" *ngFor="let col of columns">
+                                    {{col}}
+                                    <p-sortIcon field="{{col}}">
+                                    </p-sortIcon>
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns" let-editing="editing"
+                            let-ri="rowIndex">
+                            <tr [pEditableRow]="rowData">
+                                <td class="text-center">
+                                    <button pButton pRipple type="button" icon="fa-solid fa-trash"
+                                        (click)="delete_symbol_data(rowData)"
+                                        class="p-button-rounded p-button-text p-button-danger"></button>
+                                </td>
+                                <td style="width: 3rem; text-align: center;">
+                                    <button pButton pRipple type="button" icon="fa-duotone fa-pen-to-square"
+                                        class="p-button-rounded p-button-success p-button-text"
+                                        (click)="update_symbol_data(rowData)"></button>
+                                </td>
+                                <td *ngFor="let col of columns">
+                                    {{rowData[col]}}
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="8">No data found.</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </ng-template>
+    </p-tabPanel>
+</p-tabView>
+
+<!-- Main Section (ends) -->

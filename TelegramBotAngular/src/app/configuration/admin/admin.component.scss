@@ -1,0 +1,27 @@
+tr {
+    td:nth-child(3) {
+        .document-badge {
+            border-radius: 2px;
+            padding: 0.25em 0.5rem !important;
+            text-transform: uppercase;
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: 0.3px;
+        }
+
+        .document-badge.status-active {
+            background: #c8e6c9;
+            color: #256029;
+        }
+
+        .document-badge.status-pending {
+            background: #fde0c2;
+            color: #f57c00;
+        }
+
+        .document-badge.status-inactive {
+            background: #ffcdd2;
+            color: #c63737;
+        }
+    }
+}

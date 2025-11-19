@@ -1,0 +1,147 @@
+<!-- Global Section -->
+<p-toast></p-toast>
+
+<div class="loading-indicator" *ngIf="ProgressSpinnerDlg">
+    <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8"
+        animationDuration=".5s"></p-progressSpinner>
+</div>
+<!-- GLobal Seection -->
+
+<!-- Duplicate IP Section -->
+<p-tabView styleClass="tabview-custom" (onChange)="onTabChange($event)">
+    <p-tabPanel>
+        <ng-template pTemplate="header">
+            <i class="fa-duotone fa-circle-1 mr-2"></i>
+            <span class="uppercase">Duplicate IP</span>
+        </ng-template>
+        <ng-template pTemplate="body">
+            <p-dialog [(visible)]="duplicate_ip_upload_dialog" appendTo="body" [modal]="true"
+                [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '35vw'}" [closable]="false"
+                [showHeader]="false">
+                <div class="flex flex-column align-items-center my-4">
+                    <span
+                        class="flex align-items-center justify-content-center bg-pink-100 text-pink-800 mr-3 border-circle mb-3"
+                        style="width:64px;height:64px">
+                        <i class="pi pi-check text-5xl"></i>
+                    </span>
+                    <div class="font-bold text-xl p-text-uppercase mb-3 text-900">Upload Confirmation </div>
+                    <div>Do you want to import <b class="text-green-500"> {{ duplicate_ip_file_name }} </b>?</div>
+                </div>
+
+                <ng-template pTemplate="footer">
+                    <div class=" border-top-1 surface-border pt-3 flex">
+                        <button pButton pRipple icon="pi pi-times" (click)="cancel_duplicate_ip_upload()" label="Cancel"
+                            class="p-button-outlined w-6 mr-2"></button>
+                        <button pButton pRipple icon="pi pi-check" (click)="confirm_duplicate_ip_upload()" label="Save"
+                            class="w-6 ml-2"></button>
+                    </div>
+                </ng-template>
+            </p-dialog>
+            <div class="grid mt-1">
+                <div class="p-fluid" style="width: 100%">
+                    <p-panel class="p-0" header="Duplicate IP Analysis">
+                        <div class="grid align-items-center">
+                            <div class="col-3 p-3">
+                                <p-fileUpload name="file[]" mode="basic" [auto]="true" chooseIcon="pi pi-upload"
+                                    chooseLabel="Import File (.log)" accept="{{filetype}}" #DuplicateIpFile
+                                    [customUpload]="true" styleClass="p-button-secondary"
+                                    (uploadHandler)="duplicate_ip_Upload_File($event, DuplicateIpFile)">
+                                </p-fileUpload>
+                            </div>
+                            <div class="file-name">
+                                <p class="italic text-red-500">{{ duplicate_ip_file_name }}</p>
+                            </div>
+                        </div>
+                    </p-panel>
+                </div>
+            </div>
+        </ng-template>
+    </p-tabPanel>
+    <p-tabPanel>
+        <ng-template pTemplate="header">
+            <i class="fa-duotone fa-circle-2 mr-2"></i>
+            <span class="uppercase">Summary</span>
+        </ng-template>
+        <ng-template pTemplate="body">
+            <p-dialog [(visible)]="summary_csv_upload_dialog" appendTo="body" [modal]="true"
+                [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '35vw'}" [closable]="false"
+                [showHeader]="false">
+                <div class="flex flex-column align-items-center my-4">
+                    <span
+                        class="flex align-items-center justify-content-center bg-pink-100 text-pink-800 mr-3 border-circle mb-3"
+                        style="width:64px;height:64px">
+                        <i class="pi pi-check text-5xl"></i>
+                    </span>
+                    <div class="font-bold text-xl p-text-uppercase mb-3 text-900">Upload Confirmation </div>
+                    <div>Do you want to import <b class="text-green-500"> {{ summary_csv_file_name }} </b>?</div>
+                </div>
+
+                <ng-template pTemplate="footer">
+                    <div class=" border-top-1 surface-border pt-3 flex">
+                        <button pButton pRipple icon="pi pi-times" (click)="cancel_summary_csv_upload()" label="Cancel"
+                            class="p-button-outlined w-6 mr-2"></button>
+                        <button pButton pRipple icon="pi pi-check" (click)="confirm_summary_csv_upload()" label="Save"
+                            class="w-6 ml-2"></button>
+                    </div>
+                </ng-template>
+            </p-dialog>
+
+            <p-dialog [(visible)]="summary_zip_upload_dialog" appendTo="body" [modal]="true"
+                [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '35vw'}" [closable]="false"
+                [showHeader]="false">
+                <div class="flex flex-column align-items-center my-4">
+                    <span
+                        class="flex align-items-center justify-content-center bg-pink-100 text-pink-800 mr-3 border-circle mb-3"
+                        style="width:64px;height:64px">
+                        <i class="pi pi-check text-5xl"></i>
+                    </span>
+                    <div class="font-bold text-xl p-text-uppercase mb-3 text-900">Upload Confirmation </div>
+                    <div>Do you want to import <b class="text-green-500"> {{ summary_zip_file_name }} </b>?</div>
+                </div>
+
+                <ng-template pTemplate="footer">
+                    <div class=" border-top-1 surface-border pt-3 flex">
+                        <button pButton pRipple icon="pi pi-times" (click)="cancel_summary_zip_upload()" label="Cancel"
+                            class="p-button-outlined w-6 mr-2"></button>
+                        <button pButton pRipple icon="pi pi-check" (click)="confirm_summary_zip_upload()" label="Save"
+                            class="w-6 ml-2"></button>
+                    </div>
+                </ng-template>
+            </p-dialog>
+
+            <div class="grid mt-1">
+                <div class="p-fluid" style="width: 100%">
+                    <p-panel class="p-0" header="Summary Analysis">
+                        <div class="grid align-items-center">
+                            <div class="col-3 p-3">
+                                <span class="p-float-label">
+                                    <p class="italic text-red-500 m-0">{{ summary_csv_file_name }}</p>
+                                    <p-fileUpload name="file[]" mode="basic" [auto]="true" chooseIcon="pi pi-upload"
+                                        chooseLabel="Import Deal History (.csv)" accept="{{history_file_type}}"
+                                        #summaryCSVFile [customUpload]="true" styleClass="p-button-secondary"
+                                        (uploadHandler)="summary_csv_Upload_File($event, summaryCSVFile)">
+                                    </p-fileUpload>
+                                </span>
+                            </div>
+                            <div class="col-3 p-3">
+                                <span class="p-float-label">
+                                    <p class="italic text-red-500 m-0">{{ summary_zip_file_name }}</p>
+                                    <p-fileUpload name="file[]" mode="basic" [auto]="true" chooseIcon="pi pi-upload"
+                                        chooseLabel="Import Deal Transaction (.zip)" accept="{{trans_file_type}}"
+                                        #summaryZIPFile [customUpload]="true" styleClass="p-button-secondary"
+                                        (uploadHandler)="summary_zip_Upload_File($event, summaryZIPFile)">
+                                    </p-fileUpload>
+                                </span>
+                            </div>
+                            <div class="col p-3 text-right">
+                                <button pButton pRipple label="Calculate" class="p-button-success w-auto"
+                                    (click)="save_summary_details()"></button>
+                            </div>
+                        </div>
+                    </p-panel>
+                </div>
+            </div>
+        </ng-template>
+    </p-tabPanel>
+</p-tabView>
+<!-- Duplicate IP Section -->

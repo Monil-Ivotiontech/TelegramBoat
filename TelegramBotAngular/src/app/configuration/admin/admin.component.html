@@ -1,0 +1,200 @@
+<!-- Global Section -->
+<p-toast></p-toast>
+
+<div class="loading-indicator" *ngIf="ProgressSpinnerDlg">
+    <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8"
+        animationDuration=".5s"></p-progressSpinner>
+</div>
+<!-- GLobal Seection -->
+
+<!-- Admin Section -->
+<p-tabView styleClass="tabview-custom" (onChange)="onTabChange($event)">
+    <p-tabPanel>
+        <ng-template pTemplate="header">
+            <i class="fa-duotone fa-circle-1 mr-2"></i>
+            <span class="uppercase">Users List</span>
+        </ng-template>
+        <ng-template pTemplate="body">
+            <p-dialog [(visible)]="delete_user_dialog" appendTo="body" [modal]="true"
+                [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '35vw'}" [closable]="false"
+                [showHeader]="false">
+                <div class="flex flex-column align-items-center my-4">
+                    <span
+                        class="flex align-items-center justify-content-center bg-pink-100 text-pink-800 mr-3 border-circle mb-3"
+                        style="width:64px;height:64px">
+                        <i class="pi pi-check text-5xl"></i>
+                    </span>
+                    <div class="font-bold text-xl p-text-uppercase mb-3 text-900">Delete Confirmation </div>
+                    <div>Are you sure you want to delete the <b class="text-primary"> {{selected_first_name}}
+                            {{selected_last_name}}'s </b> records ?</div>
+                </div>
+
+                <ng-template pTemplate="footer">
+                    <div class=" border-top-1 surface-border pt-3 flex">
+                        <button pButton pRipple icon="fa-regular fa-trash-can-xmark" (click)="cancel_user_delete()"
+                            label="Cancel" class="p-button-outlined w-6 mr-2"></button>
+                        <button pButton pRipple icon="fa-regular fa-trash-check" (click)="confirm_user_delete()"
+                            label="Delete" class="w-6 ml-2"></button>
+                    </div>
+                </ng-template>
+            </p-dialog>
+            <div class="grid mt-1">
+                <div class="col-12 p-0">
+                    <p-table #radt [value]="registered_admin_row_data" [columns]="registered_admin_col_header"
+                        [resizableColumns]="true" [autoLayout]="true" editMode="row" dataKey="userid" [rowHover]="true"
+                        [rows]="10" [paginator]="true" responsiveLayout="scroll"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        [showCurrentPageReport]="true"
+                        [globalFilterFields]="['userid', 'firstname', 'lastname', 'email', 'mobileno', 'status', 'regist_date']"
+                        [filterDelay]="100">
+                        <ng-template pTemplate="caption">
+                            <div class="flex justify-content-between flex-column sm:flex-row mb-2">
+                                <h5 class="p-mb-0 p-mr-2 p-mt-1">Registered Admin Users List</h5>
+                                <div class="flex">
+                                    <p-button icon="fa-solid fa-arrow-rotate-right"
+                                        styleClass="mr-2 p-button-refresh p-button-outlined"
+                                        (click)="refreshTable()"></p-button>
+                                    <p-dropdown [options]="status_list" [autoDisplayFirst]="true" styleClass="mr-2"
+                                        (onChange)="on_status_select($event)">
+                                    </p-dropdown>
+                                    <p-button pRipple label="New" icon="pi pi-plus" styleClass="p-button-primary"
+                                        (click)="open_new_user_config()">
+                                    </p-button>
+                                </div>
+                            </div>
+                            <div class="flex justify-content-between flex-column sm:flex-row">
+                                <div>
+                                    <span class="p-input-icon-left">
+                                        <i class="pi pi-search"></i>
+                                        <input pInputText type="text" #filter (input)="onGlobalFilter(radt, $event)"
+                                            placeholder="Search Keyword" class="w-full" />
+                                    </span>
+                                </div>
+                                <div>
+                                    <button type="button" label="Export" pButton pRipple
+                                        icon="fa-solid fa-cloud-arrow-down" (click)="admin_export()"
+                                        class="p-button-success"></button>
+                                </div>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr *ngIf="registered_admin_row_data !== []">
+                                <th style="width: 3rem"> delete </th>
+                                <th pSortableColumn="userid"> User ID
+                                    <p-sortIcon field="userid">
+                                    </p-sortIcon>
+                                </th>
+                                <th pSortableColumn="status"> Status
+                                    <p-sortIcon field="status">
+                                    </p-sortIcon>
+                                </th>
+                                <th pSortableColumn="firstname"> First Name
+                                    <p-sortIcon field="firstname">
+                                    </p-sortIcon>
+                                </th>
+                                <th pSortableColumn="lastname"> Last Name
+                                    <p-sortIcon field="lastname">
+                                    </p-sortIcon>
+                                </th>
+                                <th pSortableColumn="email"> Email
+                                    <p-sortIcon field="email"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="mobileno"> Mobile No
+                                    <p-sortIcon field="mobileno">
+                                    </p-sortIcon>
+                                </th>
+                                <th pSortableColumn="country"> Country
+                                    <p-sortIcon field="country">
+                                    </p-sortIcon>
+                                </th>
+                                <th pSortableColumn="role"> role
+                                    <p-sortIcon field="role">
+                                    </p-sortIcon>
+                                </th>
+
+                                <th pSortableColumn="regist_date"> Registration Date
+                                    <p-sortIcon field="regist_date"></p-sortIcon>
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns" let-editing="editing"
+                            let-ri="rowIndex">
+                            <tr [pEditableRow]="rowData" *ngIf="registered_admin_row_data !== []">
+                                <td class="text-center">
+                                    <button pButton pRipple type="button" icon="fa-solid fa-trash-can"
+                                        class="p-button-rounded p-button-danger p-button-text"
+                                        (click)="delete_selected_reg_admin_data(rowData)"></button>
+                                </td>
+                                <td>
+                                    {{rowData.userid}}
+                                </td>
+                                <td>
+                                    <span [class]="'document-badge status-' + rowData.status">{{rowData.status}}</span>
+                                </td>
+                                <td>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <input pInputText type="text" [(ngModel)]="rowData.firstname" />
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{rowData.firstname}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <input pInputText type="text" [(ngModel)]="rowData.lastname" />
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{rowData.lastname}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <input pInputText type="text" [(ngModel)]="rowData.email" />
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{rowData.email}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <input pInputText type="text" [(ngModel)]="rowData.mobileno" />
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{rowData.mobileno}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td> {{ rowData.country }} </td>
+                                <td> {{ rowData.role }} </td>
+
+                                <td>
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <input pInputText type="text" [(ngModel)]="rowData.regist_date" />
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{rowData.regist_date}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="10">No data found.</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </ng-template>
+    </p-tabPanel>
+</p-tabView>
+<!-- Admin Section -->

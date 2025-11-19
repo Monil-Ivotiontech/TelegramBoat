@@ -1,0 +1,635 @@
+<!-- Global Section -->
+<p-toast></p-toast>
+
+<div class="loading-indicator" *ngIf="ProgressSpinnerDlg">
+    <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8"
+        animationDuration=".5s"></p-progressSpinner>
+</div>
+<!-- GLobal Seection -->
+
+<!-- MT user Section -->
+<p-tabView styleClass="tabview-custom" (onChange)="onTabChange($event)">
+    <p-tabPanel>
+        <ng-template pTemplate="header">
+            <i class="fa-duotone fa-circle-1 mr-2"></i>
+            <span class="uppercase">Deal</span>
+        </ng-template>
+        <ng-template pTemplate="body">
+            <div class="grid mt-1">
+                <div class="col-12 p-0">
+                    <p-table #deal [value]="deal_row_data" [columns]="deal_col_header" [resizableColumns]="true"
+                        [autoLayout]="true" editMode="row" dataKey="Login" [rowHover]="true" [rows]="10"
+                        [paginator]="true" responsiveLayout="scroll"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        [showCurrentPageReport]="true"
+                        [globalFilterFields]="['Login', 'Mailbox', 'Name', 'RequestLimitLogs', 'RequestLimitReports', 'Server']"
+                        *ngIf="mt5_manager_name_table" [filterDelay]="100">
+                        <ng-template pTemplate="caption">
+                            <div class="flex justify-content-between flex-column sm:flex-row mb-2">
+                                <h5 class="p-mb-0 p-mr-2 p-mt-1"> MT5 Manager Details</h5>
+                                <div class="flex">
+                                    <p-button icon="fa-solid fa-arrow-rotate-right"
+                                        styleClass="mr-2 p-button-refresh p-button-outlined"
+                                        (click)="refreshTable()"></p-button>
+                                    <span class="p-input-icon-left mr-2">
+                                        <i class="pi pi-search"></i>
+                                        <input pInputText type="text" #filter (input)="onGlobalFilter(deal, $event)"
+                                            placeholder="Search Keyword" class="w-full" />
+                                    </span>
+                                    <button type="button" label="Export" pButton pRipple
+                                        icon="fa-solid fa-cloud-arrow-down" (click)="deal_export()"
+                                        class="p-button-success"></button>
+                                </div>
+                            </div>
+                            <div class="flex justify-content-between flex-column sm:flex-row">
+                                <p-selectButton [options]="deal_groups_tables_list"
+                                    (onOptionClick)="deal_groups_table_name_switched($event)"
+                                    [(ngModel)]="deal_groups_switched_table_list_name" optionLabel="label"
+                                    optionValue="value"></p-selectButton>
+                                <div>
+                                    <button type="button" [disabled]="deal_groups_radio_value == undefined"
+                                        label="Commit" pButton pRipple icon="fa-solid fa-plus"
+                                        (click)="get_mt5_managerwise_user_deal_detail()"></button>
+                                </div>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr *ngIf="deal_row_data !== []">
+                                <th style="width: 2rem">
+                                </th>
+                                <th pSortableColumn="Login">Login<p-sortIcon field="Login"></p-sortIcon></th>
+                                <th pSortableColumn="Name">Name<p-sortIcon field="Name"></p-sortIcon></th>
+                                <th pSortableColumn="Mailbox">Mailbox<p-sortIcon field="Mailbox"></p-sortIcon></th>
+                                <th pSortableColumn="RequestLimitLogs">RequestLimitLogs<p-sortIcon
+                                        field="RequestLimitLogs"></p-sortIcon></th>
+                                <th pSortableColumn="RequestLimitReports">RequestLimitReports<p-sortIcon
+                                        field="RequestLimitReports"></p-sortIcon></th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns" let-editing="editing"
+                            let-ri="rowIndex">
+                            <tr [pEditableRow]="rowData" *ngIf="deal_row_data !== []">
+                                <td>
+                                    <p-tableRadioButton [value]="rowData"
+                                        (click)="deal_groups_radio_checked(rowData)"></p-tableRadioButton>
+                                </td>
+                                <td>{{rowData.Login}}</td>
+                                <td>{{rowData.Name}}</td>
+                                <td>{{rowData.Mailbox}}</td>
+                                <td>{{rowData.RequestLimitLogs}}</td>
+                                <td>{{rowData.RequestLimitReports}}</td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="10">No data found.</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                    <p-table #deal [value]="deal_row_data" [columns]="deal_col_header" [resizableColumns]="true"
+                        [autoLayout]="true" editMode="row" dataKey="managerid" [rowHover]="true" [rows]="10"
+                        [paginator]="true" responsiveLayout="scroll"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        [showCurrentPageReport]="true"
+                        [globalFilterFields]="['managerid', 'managername', 'managerdesc', 'chatid', 'user_count']"
+                        *ngIf="venus_manager_name_table" [filterDelay]="100">
+                        <ng-template pTemplate="caption">
+                            <div class="flex justify-content-between flex-column sm:flex-row mb-2">
+                                <h5 class="p-mb-0 p-mr-2 p-mt-1">Venus Manager Details</h5>
+                                <div class="flex">
+                                    <p-button icon="fa-solid fa-arrow-rotate-right"
+                                        styleClass="mr-2 p-button-refresh p-button-outlined"
+                                        (click)="refreshTable()"></p-button>
+                                    <span class="p-input-icon-left mr-2">
+                                        <i class="pi pi-search"></i>
+                                        <input pInputText type="text" #filter (input)="onGlobalFilter(deal, $event)"
+                                            placeholder="Search Keyword" class="w-full" />
+                                    </span>
+                                    <button type="button" label="Export" pButton pRipple
+                                        icon="fa-solid fa-cloud-arrow-down" (click)="deal_export()"
+                                        class="p-button-success"></button>
+                                </div>
+                            </div>
+                            <div class="flex justify-content-between flex-column sm:flex-row">
+                                <p-selectButton [options]="deal_groups_tables_list"
+                                    (onOptionClick)="deal_groups_table_name_switched($event)"
+                                    [(ngModel)]="deal_groups_switched_table_list_name" optionLabel="label"
+                                    optionValue="value"></p-selectButton>
+                                <div>
+                                    <button type="button" [disabled]="deal_groups_radio_value == undefined"
+                                        label="Commit" pButton pRipple icon="fa-solid fa-plus"
+                                        (click)="get_mt5_managerwise_user_deal_detail()"></button>
+                                </div>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr *ngIf="deal_row_data !== []">
+                                <th style="width: 2rem">
+                                </th>
+                                <th pSortableColumn="{{col}}" class="p-text-uppercase" *ngFor="let col of columns">
+                                    {{col}}
+                                    <p-sortIcon field="{{col}}">
+                                    </p-sortIcon>
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns" let-editing="editing"
+                            let-ri="rowIndex">
+                            <tr [pEditableRow]="rowData" *ngIf="deal_row_data !== []">
+                                <td>
+                                    <p-tableRadioButton [value]="rowData"
+                                        (click)="deal_groups_radio_checked(rowData)"></p-tableRadioButton>
+                                </td>
+                                <td *ngFor="let col of columns">
+                                    {{rowData[col]}}
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="10">No data found.</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+            <div class="grid mt-3">
+                <div class="col-12 p-0">
+                    <p-table #dd [value]="deal_deatils_summary_row_data" [columns]="deal_deatils_summary_col_header"
+                        [resizableColumns]="true" [autoLayout]="true" editMode="row" dataKey="groupid" [rowHover]="true"
+                        [rows]="10" [paginator]="true" responsiveLayout="scroll"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        [showCurrentPageReport]="true"
+                        [globalFilterFields]="['Deal', 'ExternalID', 'Login', 'Dealer', 'Order', 'Action', 'Entry', 'Reason', 'Digits', 'DigitsCurrency', 'ContractSize', 'Time', 'TimeMsc', 'Symbol', 'Price', 'Volume', 'VolumeExt', 'Profit', 'Storage', 'Commission', 'Fee', 'RateProfit', 'RateMargin', 'ExpertID', 'PositionID', 'Comment', 'ProfitRaw', 'PricePosition', 'PriceSL', 'PriceTP', 'VolumeClosed', 'VolumeClosedExt', 'TickValue', 'TickSize', 'Flags', 'Gateway', 'PriceGateway', 'ModifyFlags', 'Value', 'MarketBid', 'MarketAsk', 'MarketLast']"
+                        *ngIf="deal_details_table" [filterDelay]="100">
+                        <ng-template pTemplate="caption">
+                            <div class="flex justify-content-between flex-column sm:flex-row mb-2">
+                                <h5 class="p-mb-0 p-mr-2 p-mt-1">Deals Details</h5>
+                                <div class="flex">
+                                    <p-button icon="fa-solid fa-arrow-rotate-right"
+                                        styleClass="mr-2 p-button-refresh p-button-outlined"
+                                        (click)="refreshTable()"></p-button>
+                                    <span class="p-input-icon-left">
+                                        <i class="pi pi-search"></i>
+                                        <input pInputText type="text" #filter (input)="onGlobalFilter(dd, $event)"
+                                            placeholder="Search Keyword" class="w-full" />
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="flex justify-content-between flex-column sm:flex-row">
+                                <p-selectButton [options]="deal_types_tables_list"
+                                    (onOptionClick)="deal_types_table_name_switched($event)"
+                                    [(ngModel)]="deal_types_switched_table_list_name" optionLabel="label"
+                                    optionValue="value"></p-selectButton>
+                                <div>
+                                    <button type="button" label="Export" pButton pRipple
+                                        icon="fa-solid fa-cloud-arrow-down" (click)="deal_details_summary_export()"
+                                        class="p-button-success"></button>
+                                </div>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr *ngIf="deal_row_data !== []">
+                                <th pSortableColumn="{{col}}" class="p-text-uppercase" *ngFor="let col of columns">
+                                    {{col}}
+                                    <p-sortIcon field="{{col}}">
+                                    </p-sortIcon>
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns" let-editing="editing"
+                            let-ri="rowIndex">
+                            <tr [pEditableRow]="rowData" *ngIf="deal_row_data !== []">
+                                <td *ngFor="let col of columns">
+                                    {{rowData[col]}}
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="10">No data found.</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                    <p-table #ds [value]="deal_deatils_summary_row_data" [columns]="deal_deatils_summary_col_header"
+                        [resizableColumns]="true" [autoLayout]="true" editMode="row" dataKey="groupid" [rowHover]="true"
+                        [rows]="10" [paginator]="true" responsiveLayout="scroll"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        [showCurrentPageReport]="true" [globalFilterFields]="['Login', 'Profit']"
+                        *ngIf="deal_summary_table" [filterDelay]="100">
+                        <ng-template pTemplate="caption">
+                            <div class="flex justify-content-between flex-column sm:flex-row mb-2">
+                                <h5 class="p-mb-0 p-mr-2 p-mt-1">Deal Summary</h5>
+                                <div class="flex">
+                                    <p-button icon="fa-solid fa-arrow-rotate-right"
+                                        styleClass="mr-2 p-button-refresh p-button-outlined"
+                                        (click)="refreshTable()"></p-button>
+                                    <span class="p-input-icon-left">
+                                        <i class="pi pi-search"></i>
+                                        <input pInputText type="text" #filter (input)="onGlobalFilter(ds, $event)"
+                                            placeholder="Search Keyword" class="w-full" />
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="flex justify-content-between flex-column sm:flex-row">
+                                <p-selectButton [options]="deal_types_tables_list"
+                                    (onOptionClick)="deal_types_table_name_switched($event)"
+                                    [(ngModel)]="deal_types_switched_table_list_name" optionLabel="label"
+                                    optionValue="value"></p-selectButton>
+                                <div>
+                                    <button type="button" label="Export" pButton pRipple
+                                        icon="fa-solid fa-cloud-arrow-down" (click)="deal_details_summary_export()"
+                                        class="p-button-success"></button>
+                                </div>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr *ngIf="deal_row_data !== []">
+                                <th pSortableColumn="{{col}}" class="p-text-uppercase" *ngFor="let col of columns">
+                                    {{col}}
+                                    <p-sortIcon field="{{col}}">
+                                    </p-sortIcon>
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns" let-editing="editing"
+                            let-ri="rowIndex">
+                            <tr [pEditableRow]="rowData" *ngIf="deal_row_data !== []">
+                                <td *ngFor="let col of columns">
+                                    {{rowData[col]}}
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="10">No data found.</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </ng-template>
+    </p-tabPanel>
+    <p-tabPanel>
+        <ng-template pTemplate="header">
+            <i class="fa-duotone fa-circle-2 mr-2"></i>
+            <span class="uppercase">Position</span>
+        </ng-template>
+        <ng-template pTemplate="body">
+            <div class="grid mt-1">
+                <div class="col-12 p-0">
+                    <p-table #pmtd [value]="position_group_row_data" [columns]="position_group_col_header"
+                        [resizableColumns]="true" [autoLayout]="true" editMode="row" dataKey="Login" [rowHover]="true"
+                        [rows]="10" [paginator]="true" responsiveLayout="scroll"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        [showCurrentPageReport]="true"
+                        [globalFilterFields]="['Login', 'Mailbox', 'Name', 'RequestLimitLogs', 'RequestLimitReports', 'Server']"
+                        *ngIf="position_mt5_manager_name_table" [filterDelay]="100">
+                        <ng-template pTemplate="caption">
+                            <div class="flex justify-content-between flex-column sm:flex-row mb-2">
+                                <h5 class="p-mb-0 p-mr-2 p-mt-1"> MT5 Manager Details</h5>
+                                <div class="flex">
+                                    <p-button icon="fa-solid fa-arrow-rotate-right"
+                                        styleClass="mr-2 p-button-refresh p-button-outlined"
+                                        (click)="refreshTable()"></p-button>
+                                    <span class="p-input-icon-left mr-2">
+                                        <i class="pi pi-search"></i>
+                                        <input pInputText type="text" #filter (input)="onGlobalFilter(pmtd, $event)"
+                                            placeholder="Search Keyword" class="w-full" />
+                                    </span>
+                                    <button type="button" label="Export" pButton pRipple
+                                        icon="fa-solid fa-cloud-arrow-down" (click)="position_group_export()"
+                                        class="p-button-success"></button>
+                                </div>
+                            </div>
+                            <div class="flex justify-content-between flex-column sm:flex-row">
+                                <p-selectButton [options]="position_groups_tables_list"
+                                    (onOptionClick)="position_groups_table_name_switched($event)"
+                                    [(ngModel)]="position_groups_switched_table_list_name" optionLabel="label"
+                                    optionValue="value"></p-selectButton>
+                                <div>
+                                    <button type="button" [disabled]="position_groups_radio_value == undefined"
+                                        label="Commit" pButton pRipple icon="fa-solid fa-plus"
+                                        (click)="get_mt5_managerwise_user_position_detail()"></button>
+                                </div>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr *ngIf="position_group_row_data !== []">
+                                <th style="width: 2rem">
+                                </th>
+                                <th pSortableColumn="Login">Login<p-sortIcon field="Login"></p-sortIcon></th>
+                                <th pSortableColumn="Name">Name<p-sortIcon field="Name"></p-sortIcon></th>
+                                <th pSortableColumn="Mailbox">Mailbox<p-sortIcon field="Mailbox"></p-sortIcon></th>
+                                <th pSortableColumn="RequestLimitLogs">RequestLimitLogs<p-sortIcon
+                                        field="RequestLimitLogs"></p-sortIcon></th>
+                                <th pSortableColumn="RequestLimitReports">RequestLimitReports<p-sortIcon
+                                        field="RequestLimitReports"></p-sortIcon></th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns">
+                            <tr [pEditableRow]="rowData" *ngIf="position_group_row_data !== []">
+                                <td>
+                                    <p-tableRadioButton [value]="rowData"
+                                        (click)="position_groups_radio_checked(rowData)"></p-tableRadioButton>
+                                </td>
+                                <td>{{rowData.Login}}</td>
+                                <td>{{rowData.Name}}</td>
+                                <td>{{rowData.Mailbox}}</td>
+                                <td>{{rowData.RequestLimitLogs}}</td>
+                                <td>{{rowData.RequestLimitReports}}</td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="10">No data found.</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+
+                    <p-table #deal [value]="position_group_row_data" [columns]="position_group_col_header"
+                        [resizableColumns]="true" [autoLayout]="true" editMode="row" dataKey="managerid"
+                        [rowHover]="true" [rows]="10" [paginator]="true" responsiveLayout="scroll"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        [showCurrentPageReport]="true"
+                        [globalFilterFields]="['managerid', 'managername', 'managerdesc', 'chatid', 'user_count']"
+                        *ngIf="position_venus_manager_name_table" [filterDelay]="100">
+                        <ng-template pTemplate="caption">
+                            <div class="flex justify-content-between flex-column sm:flex-row mb-2">
+                                <h5 class="p-mb-0 p-mr-2 p-mt-1">Venus Manager Details</h5>
+                                <div class="flex">
+                                    <p-button icon="fa-solid fa-arrow-rotate-right"
+                                        styleClass="mr-2 p-button-refresh p-button-outlined"
+                                        (click)="refreshTable()"></p-button>
+                                    <span class="p-input-icon-left mr-2">
+                                        <i class="pi pi-search"></i>
+                                        <input pInputText type="text" #filter (input)="onGlobalFilter(deal, $event)"
+                                            placeholder="Search Keyword" class="w-full" />
+                                    </span>
+                                    <button type="button" label="Export" pButton pRipple
+                                        icon="fa-solid fa-cloud-arrow-down" (click)="position_group_export()"
+                                        class="p-button-success"></button>
+                                </div>
+                            </div>
+                            <div class="flex justify-content-between flex-column sm:flex-row">
+                                <p-selectButton [options]="position_groups_tables_list"
+                                    (onOptionClick)="position_groups_table_name_switched($event)"
+                                    [(ngModel)]="position_groups_switched_table_list_name" optionLabel="label"
+                                    optionValue="value"></p-selectButton>
+                                <div>
+                                    <button type="button" [disabled]="position_groups_radio_value == undefined"
+                                        label="Commit" pButton pRipple icon="fa-solid fa-plus"
+                                        (click)="get_mt5_managerwise_user_position_detail()"></button>
+                                </div>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr *ngIf="position_group_col_header !== []">
+                                <th style="width: 2rem">
+                                </th>
+                                <th pSortableColumn="managerid" class="p-text-uppercase"> managerid<p-sortIcon
+                                        field="managerid"></p-sortIcon></th>
+                                <th pSortableColumn="managername" class="p-text-uppercase"> managername<p-sortIcon
+                                        field="managername"></p-sortIcon></th>
+                                <th pSortableColumn="managerdesc" class="p-text-uppercase"> managerdesc<p-sortIcon
+                                        field="managerdesc"></p-sortIcon></th>
+                                <th pSortableColumn="chatid" class="p-text-uppercase"> chatid<p-sortIcon
+                                        field="chatid"></p-sortIcon></th>
+                                <th pSortableColumn="user_count" class="p-text-uppercase"> user_count<p-sortIcon
+                                        field="user_count"></p-sortIcon></th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns" let-editing="editing"
+                            let-ri="rowIndex">
+                            <tr [pEditableRow]="rowData" *ngIf="position_group_row_data !== []">
+                                <td>
+                                    <p-tableRadioButton [value]="rowData"
+                                        (click)="position_groups_radio_checked(rowData)"></p-tableRadioButton>
+                                </td>
+                                <td>{{rowData.managerid}}</td>
+                                <td>{{rowData.managername}}</td>
+                                <td>{{rowData.managerdesc}}</td>
+                                <td>{{rowData.chatid}}</td>
+                                <td>{{rowData.user_count}}</td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="10">No data found.</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    <!-- <p-table #pvd [value]="position_group_row_data" [columns]="position_group_col_header"
+                        [resizableColumns]="true" [autoLayout]="true" editMode="row" dataKey="groupid" [rowHover]="true"
+                        [rows]="10" [paginator]="true" responsiveLayout="scroll"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        [showCurrentPageReport]="true"
+                        [globalFilterFields]="['managerid', 'managername', 'managerdesc', 'chatid', 'user_count']"
+                        *ngIf="position_venus_manager_name_table" [filterDelay]="100">
+                        <ng-template pTemplate="caption">
+                            <div class="flex justify-content-between flex-column sm:flex-row mb-2">
+                                <h5 class="p-mb-0 p-mr-2 p-mt-1"> Venus Manager Details</h5>
+                                <div class="flex">
+                                    <p-button icon="fa-solid fa-arrow-rotate-right"
+                                        styleClass="mr-2 p-button-refresh p-button-outlined"
+                                        (click)="refreshTable()"></p-button>
+                                    <span class="p-input-icon-left mr-2">
+                                        <i class="pi pi-search"></i>
+                                        <input pInputText type="text" #filter (input)="onGlobalFilter(pvd, $event)"
+                                            placeholder="Search Keyword" class="w-full" />
+                                    </span>
+                                    <button type="button" label="Export" pButton pRipple
+                                        icon="fa-solid fa-cloud-arrow-down" (click)="position_group_export()"
+                                        class="p-button-success"></button>
+                                </div>
+                            </div>
+                            <div class="flex justify-content-between flex-column sm:flex-row">
+                                <p-selectButton [options]="position_groups_tables_list"
+                                    (onOptionClick)="position_groups_table_name_switched($event)"
+                                    [(ngModel)]="position_groups_switched_table_list_name" optionLabel="label"
+                                    optionValue="value"></p-selectButton>
+                                <div>
+                                    <button type="button" [disabled]="position_groups_radio_value == undefined"
+                                        label="Commit" pButton pRipple icon="fa-solid fa-plus"
+                                        (click)="get_mt5_managerwise_user_position_detail()"></button>
+                                </div>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr class="venus_manager">
+                                <th style="width: 2rem">
+                                </th>
+                                <th pSortableColumn="{{col}}" class="p-text-uppercase" *ngFor="let col of columns">
+                                    {{col}}
+                                    <p-sortIcon field="{{col}}">
+                                    </p-sortIcon>
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns">
+                            <tr [pEditableRow]="rowData">
+                                <td>
+                                    <p-tableRadioButton [value]="rowData"
+                                        (click)="position_groups_radio_checked(rowData)"></p-tableRadioButton>
+                                </td>
+                                <td *ngFor="let col of columns">
+                                    {{rowData[col]}}
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="10">No data found.</td>
+                            </tr>
+                        </ng-template>
+                    </p-table> -->
+                </div>
+            </div>
+            <div class="grid mt-3">
+                <div class="col-12 p-0">
+                    <p-table #position [value]="position_row_data" [columns]="position_col_header"
+                        [resizableColumns]="true" [autoLayout]="true" editMode="row" dataKey="userid" [rowHover]="true"
+                        [rows]="10" [paginator]="true" responsiveLayout="scroll" *ngIf="position_details_table"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        [showCurrentPageReport]="true"
+                        [globalFilterFields]="['Position', 'ExternalID', 'Login', 'Dealer', 'Symbol', 'Action', 'Digits', 'DigitsCurrency', 'Reason', 'ContractSize', 'TimeCreate', 'TimeUpdate', 'TimeCreateMsc', 'TimeUpdateMsc', 'ModifyFlags', 'PriceOpen', 'PriceCurrent', 'PriceSL', 'PriceTP', 'Volume', 'VolumeExt', 'Profit', 'Storage', 'RateProfit', 'RateMargin', 'ExpertID', 'ExpertPositionID', 'Comment', 'ActivationMode', 'ActivationTime', 'ActivationPrice', 'ActivationFlags']"
+                        [filterDelay]="100">
+                        <ng-template pTemplate="caption">
+                            <div class="flex justify-content-between flex-column sm:flex-row mb-2">
+                                <h5 class="p-mb-0 p-mr-2 p-mt-1">Position List</h5>
+                                <div class="flex">
+                                    <p-button icon="fa-solid fa-arrow-rotate-right"
+                                        styleClass="mr-2 p-button-refresh p-button-outlined"
+                                        (click)="refreshTable()"></p-button>
+                                    <p-button pRipple label="New" icon="pi pi-plus" styleClass="p-button-primary"
+                                        (click)="open_new_position_config()">
+                                    </p-button>
+                                </div>
+                            </div>
+                            <div class="flex justify-content-between flex-column sm:flex-row">
+                                <div>
+                                    <span class="p-input-icon-left">
+                                        <i class="pi pi-search"></i>
+                                        <input pInputText type="text" #filter (input)="onGlobalFilter(position, $event)"
+                                            placeholder="Search Keyword" class="w-full" />
+                                    </span>
+                                </div>
+                                <div>
+                                    <button type="button" label="Export" pButton pRipple
+                                        icon="fa-solid fa-cloud-arrow-down" (click)="position_export()"
+                                        class="p-button-success"></button>
+                                </div>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr *ngIf="position_row_data !== []">
+                                <th pSortableColumn="{{col}}" class="p-text-uppercase" *ngFor="let col of columns">
+                                    {{col}}
+                                    <p-sortIcon field="{{col}}">
+                                    </p-sortIcon>
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns">
+                            <tr [pEditableRow]="rowData" *ngIf="position_row_data !== []">
+                                <td *ngFor="let col of columns">
+                                    {{rowData[col]}}
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="10">No data found.</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </ng-template>
+    </p-tabPanel>
+    <p-tabPanel>
+        <ng-template pTemplate="header">
+            <i class="fa-duotone fa-circle-3 mr-2"></i>
+            <span class="uppercase">Trade</span>
+        </ng-template>
+        <ng-template pTemplate="body">
+            <div class="grid mt-1">
+                <div class="col-12 p-0">
+                    <p-table #trade [value]="trade_row_data" [columns]="trade_col_header" [resizableColumns]="true"
+                        [autoLayout]="true" editMode="row" dataKey="userid" [rowHover]="true" [rows]="10"
+                        [paginator]="true" responsiveLayout="scroll"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        [showCurrentPageReport]="true"
+                        [globalFilterFields]="['userid', 'firstname', 'lastname', 'email', 'mobileno', 'status', 'regist_date']"
+                        [filterDelay]="100">
+                        <ng-template pTemplate="caption">
+                            <div class="flex justify-content-between flex-column sm:flex-row mb-2">
+                                <h5 class="p-mb-0 p-mr-2 p-mt-1">Trade List</h5>
+                                <div class="flex">
+                                    <p-button icon="fa-solid fa-arrow-rotate-right"
+                                        styleClass="mr-2 p-button-refresh p-button-outlined"
+                                        (click)="refreshTable()"></p-button>
+                                    <p-button pRipple label="New" icon="pi pi-plus" styleClass="p-button-primary"
+                                        (click)="open_new_trade_config()">
+                                    </p-button>
+                                </div>
+                            </div>
+                            <div class="flex justify-content-between flex-column sm:flex-row">
+                                <div>
+                                    <span class="p-input-icon-left">
+                                        <i class="pi pi-search"></i>
+                                        <input pInputText type="text" #filter (input)="onGlobalFilter(trade, $event)"
+                                            placeholder="Search Keyword" class="w-full" />
+                                    </span>
+                                </div>
+                                <div>
+                                    <button type="button" label="Export" pButton pRipple
+                                        icon="fa-solid fa-cloud-arrow-down" (click)="trade_export()"
+                                        class="p-button-success"></button>
+                                </div>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr *ngIf="trade_row_data !== []">
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns" let-editing="editing"
+                            let-ri="rowIndex">
+                            <tr [pEditableRow]="rowData" *ngIf="trade_row_data !== []">
+
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="10">No data found.</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </ng-template>
+    </p-tabPanel>
+</p-tabView>
+<!-- MT user Section -->

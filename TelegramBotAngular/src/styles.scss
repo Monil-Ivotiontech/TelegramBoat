@@ -1,0 +1,184 @@
+$gutter: 1rem; //for primeflex grid system
+
+/* Layout */
+@import "assets/layout/styles/layout/layout.scss";
+
+/* PrimeNG */
+@import "../node_modules/primeng/resources/primeng.min.css";
+@import "../node_modules/primeflex/primeflex.scss";
+@import "../node_modules/primeicons/primeicons.css";
+
+/* Quill Text Editor for p-editor */
+@import "../node_modules/quill/dist/quill.core.css";
+@import "../node_modules/quill/dist/quill.snow.css";
+
+/* Demos */
+@import "assets/demo/styles/flags/flags.css";
+@import "assets/demo/styles/badges.scss";
+
+*:focus {
+  box-shadow: none !important;
+}
+
+.primary-text {
+  color: var(--primary-color);
+}
+
+.transparent-menubar {
+  position: fixed;
+  width: 100%;
+  z-index: 2;
+  background-color: hsla(0, 0%, 100%, 0.5);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(2px);
+}
+
+.transparent-bg {
+  background-color: hsla(0, 0%, 100%, 0.5);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+}
+
+.loading-indicator {
+  position: fixed;
+  z-index: 999;
+  height: 1em;
+  width: 1em;
+  overflow: show;
+  margin: auto;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+/* Transparent Overlay */
+
+.loading-indicator:before {
+  content: "";
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+}
+
+.p-progress-spinner-circle {
+  animation: p-progress-spinner-color 6s ease-in-out infinite;
+}
+
+@keyframes p-progress-spinner-color {
+  100%,
+  0% {
+    stroke: var(--primary-color);
+  }
+  10% {
+    stroke: #333;
+  }
+  20% {
+    stroke: var(--primary-color);
+  }
+  30% {
+    stroke: #333;
+  }
+  40% {
+    stroke: var(--primary-color);
+  }
+  50% {
+    stroke: #333;
+  }
+  60% {
+    stroke: var(--primary-color);
+  }
+  70% {
+    stroke: #333;
+  }
+  80% {
+    stroke: var(--primary-color);
+  }
+  90% {
+    stroke: #333;
+  }
+}
+
+.p-tabview-panels {
+  background: rgb(248, 249, 250) !important;
+}
+
+.p-datatable .p-datatable-header {
+  background: var(--surface-0);
+}
+
+.p-paginator {
+  justify-content: end !important;
+}
+
+.p-datatable {
+  border: 1px solid #e9ecef;
+}
+
+.p-datatable .p-datatable-header,
+.p-datatable .p-paginator-bottom {
+  border: none;
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+  text-transform: uppercase;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+  background: var(--surface-0);
+  border-color: var(--surface-0);
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+$color_1: #495057;
+$border-color-1: var(--surface-border);
+$border-color-2: #ced4da;
+
+.p-button.p-button-icon-only.p-button-refresh {
+  background: #fff;
+  border-color: $border-color-1;
+  color: $color_1;
+  width: 3rem;
+  &:hover {
+    color: $color_1;
+    border-color: $border-color-2;
+    background: transparent;
+  }
+  &:focus {
+    color: $color_1;
+    border-color: $border-color-2;
+    background: transparent;
+  }
+}
+
+/* width */
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+  background: none;
+}
+
+/* Track */
+
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+
+/* Handle */
+
+::-webkit-scrollbar-thumb {
+  background: #eeeeee;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+
+::-webkit-scrollbar-thumb:hover {
+  background: #eeeeee;
+}

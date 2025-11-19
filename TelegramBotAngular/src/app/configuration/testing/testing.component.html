@@ -1,0 +1,1881 @@
+<!-- Global Section -->
+<p-toast></p-toast>
+
+<div class="loading-indicator" *ngIf="ProgressSpinnerDlg">
+    <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8"
+        animationDuration=".5s"></p-progressSpinner>
+</div>
+<!-- GLobal Seection -->
+
+<!-- MT user Section -->
+<p-tabView styleClass="tabview-custom" (onChange)="onTabChange($event)">
+
+    <!-- MT5 Manager Tab -->
+    <p-tabPanel>
+        <ng-template pTemplate="header">
+            <i class="fa-duotone fa-circle-1 mr-2"></i>
+            <span class="uppercase">MT5 Manager</span>
+        </ng-template>
+        <ng-template pTemplate="body">
+            <p-dialog [(visible)]="clone_mt5_manager_dialog" appendTo="body" [modal]="true"
+                [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '35vw'}" [closable]="false"
+                [showHeader]="false">
+                <div class="flex flex-column align-items-center my-4">
+                    <span
+                        class="flex align-items-center justify-content-center bg-pink-100 text-pink-800 mr-3 border-circle mb-3"
+                        style="width:64px;height:64px">
+                        <i class="pi pi-check text-5xl"></i>
+                    </span>
+                    <div class="font-bold text-xl uppercase mb-3 text-900"> New Manager Clonning </div>
+                </div>
+                <form [formGroup]="clone_managaer_form">
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> Login </span>
+                        <p-inputNumber id="loginid" formControlName="loginid" placeholder="Login"
+                            [min]="0"></p-inputNumber>
+                    </div>
+
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> Name </span>
+                        <input type="text" pInputText id="username" formControlName="username" placeholder="Username" />
+                    </div>
+
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> First Name </span>
+                        <input type="text" pInputText id="firstname" formControlName="firstname"
+                            placeholder="Firstname" />
+                    </div>
+
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> Last Name </span>
+                        <input type="text" pInputText id="lastname" formControlName="lastname" placeholder="Lastname" />
+                    </div>
+
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> Email </span>
+                        <input type="text" pInputText id="useremail" formControlName="useremail"
+                            placeholder="useremail" />
+                    </div>
+
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> State </span>
+                        <p-inputNumber id="state" formControlName="state" placeholder="State" [min]="0"></p-inputNumber>
+                    </div>
+
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> zipcode </span>
+                        <p-inputNumber id="zipcode" formControlName="zipcode" placeholder="zipcode"
+                            [min]="0"></p-inputNumber>
+                    </div>
+                </form>
+
+                <ng-template pTemplate="footer">
+                    <div class=" border-top-1 surface-border pt-3 flex">
+                        <button pButton pRipple icon="pi pi-times" (click)="cancel_mt5_manager_clonning()"
+                            label="Cancel" class="p-button-outlined w-6 mr-2"></button>
+                        <button pButton pRipple icon="pi pi-check" (click)="confirm_mt5_manager_clonning()" label="Save"
+                            class="w-6 ml-2"></button>
+                    </div>
+                </ng-template>
+            </p-dialog>
+
+            <p-dialog [(visible)]="create_manager_chat_dialog" appendTo="body" [modal]="true"
+                [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '35vw'}" [closable]="false"
+                [showHeader]="false">
+                <div class="flex flex-column align-items-center my-4">
+                    <span
+                        class="flex align-items-center justify-content-center bg-pink-100 text-pink-800 mr-3 border-circle mb-3"
+                        style="width:64px;height:64px">
+                        <i class="pi pi-check text-5xl"></i>
+                    </span>
+                    <div class="font-bold text-xl uppercase mb-3 text-900"> Create Manager Chat </div>
+                </div>
+                <form [formGroup]="manager_chat_form">
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> Chat ID </span>
+                        <p-inputNumber id="chatid" formControlName="chatid" [useGrouping]="false"
+                            [(ngModel)]="selected_available_Chatid" placeholder="Chat ID" [min]="0"></p-inputNumber>
+                    </div>
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> Command Access </span>
+                        <div class="flex align-items-center switch">
+                            <p-inputSwitch styleClass="mx-3" formControlName="cmd_access"
+                                (onChange)="cmd_access_switch_change()"
+                                [(ngModel)]="selected_cmd_access"></p-inputSwitch>
+                        </div>
+                    </div>
+                </form>
+
+                <ng-template pTemplate="footer">
+                    <div class=" border-top-1 surface-border pt-3 flex">
+                        <button pButton pRipple icon="pi pi-times" (click)="cancel_manager_chat()" label="Cancel"
+                            class="p-button-outlined w-6 mr-2"></button>
+                        <button pButton pRipple icon="pi pi-check" (click)="confirm_manager_chat()" label="Save"
+                            class="w-6 ml-2"></button>
+                    </div>
+                </ng-template>
+            </p-dialog>
+            <div class="grid mt-1">
+                <div class="col-12 p-0">
+                    <p-table #mdt [value]="manager_row_data" [columns]="manager_col_header" [resizableColumns]="true"
+                        [autoLayout]="true" editMode="row" dataKey="Login" [rowHover]="true" [rows]="10"
+                        [paginator]="true" responsiveLayout="scroll"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        [showCurrentPageReport]="true" [globalFilterFields]="['Login', 'Name', 'Mailbox', 'Server']"
+                        [filterDelay]="100">
+                        <ng-template pTemplate="caption">
+                            <div class="flex justify-content-between flex-column sm:flex-row mb-2">
+                                <h5 class="p-mb-0 p-mr-2 p-mt-1">MT5 Manager Details</h5>
+                                <div class="flex">
+                                    <p-button icon="fa-solid fa-arrow-rotate-right"
+                                        styleClass="p-button-refresh p-button-outlined"
+                                        (click)="refreshTable()"></p-button>
+                                </div>
+                            </div>
+                            <div class="flex justify-content-between flex-column sm:flex-row">
+                                <span class="p-input-icon-left">
+                                    <i class="pi pi-search"></i>
+                                    <input pInputText type="text" #filter (input)="onGlobalFilter(mdt, $event)"
+                                        placeholder="Search Keyword" class="w-full" />
+                                </span>
+                                <div>
+                                    <button type="button" label="Export" pButton pRipple
+                                        icon="fa-solid fa-cloud-arrow-down" (click)="manager_export()"
+                                        class="p-button-success"></button>
+                                </div>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr *ngIf="manager_col_header">
+                                <th style="width: 3rem;">ChatId</th>
+                                <th style="width: 3rem;">Clone</th>
+                                <th style="width: 3rem;">Groups</th>
+                                <th style="width: 3rem;">Users</th>
+                                <th pSortableColumn="Login">Login<p-sortIcon field="Login"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="chatid">chatid<p-sortIcon field="chatid"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="commandaccess">commandaccess<p-sortIcon
+                                        field="commandaccess"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="Name">Name<p-sortIcon field="Name"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="Mailbox">Mailbox<p-sortIcon field="Mailbox"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="Server">Server<p-sortIcon field="Server"></p-sortIcon>
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns" let-editing="editing"
+                            let-ri="rowIndex">
+                            <tr [pEditableRow]="rowData" *ngIf="manager_row_data">
+                                <td style="width: 3rem; text-align: center;">
+                                    <button pButton pRipple type="button" icon="fa-solid fa-plus"
+                                        (click)="open_manager_chat_dlg(rowData)"
+                                        class="p-button-rounded p-button-help p-button-text"></button>
+                                </td>
+
+                                <td style="width: 3rem; text-align: center;">
+                                    <button pButton pRipple type="button" icon="fa-duotone fa-clone"
+                                        (click)="clone_mt5_manager_record(rowData)"
+                                        class="p-button-rounded p-button-info p-button-text"></button>
+                                </td>
+
+                                <td style="width: 3rem; text-align: center;">
+                                    <button pButton pRipple type="button" icon="fa-solid fa-people-group"
+                                        class="p-button-rounded p-button-success p-button-text"
+                                        (click)="mg_group.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' });get_mt5_group_list_for_selected_manager(rowData)"></button>
+                                </td>
+
+                                <td style="width: 3rem; text-align: center;">
+                                    <button pButton pRipple type="button" icon="fa-solid fa-user-magnifying-glass"
+                                        class="p-button-rounded p-button-primary p-button-text"
+                                        (click)="mg_group.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' });get_mt5_user_list_for_selected_manager(rowData)"></button>
+                                </td>
+                                <td>{{rowData.Login}}</td>
+                                <td>{{rowData.chatid}}</td>
+                                <td>{{rowData.commandaccess}}</td>
+                                <td>{{rowData.Name}}</td>
+                                <td>{{rowData.Mailbox}}</td>
+                                <td>{{rowData.Server}}</td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="10">No data found.</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+            <div class="grid mt-3" #mg_group>
+                <div class="col-12 p-0">
+                    <p-table #mggdt [value]="manager_group_row_data" [columns]="manager_group_col_header"
+                        [resizableColumns]="true" [autoLayout]="true" editMode="row" dataKey="Group" [rowHover]="true"
+                        [rows]="10" [paginator]="true" responsiveLayout="scroll"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        [showCurrentPageReport]="true" [globalFilterFields]="['Group']" *ngIf="manager_group_list_table"
+                        [filterDelay]="100">
+                        <ng-template pTemplate="caption">
+                            <div class="flex justify-content-between flex-column sm:flex-row mb-2">
+                                <h5 class="p-mb-0 p-mr-2 p-mt-1">{{ selected_manager_table_type }}</h5>
+                                <div class="flex">
+                                    <p-button icon="fa-solid fa-arrow-rotate-right"
+                                        styleClass="p-button-refresh p-button-outlined"
+                                        (click)="refreshTable()"></p-button>
+                                </div>
+                            </div>
+                            <div class="flex justify-content-between flex-column sm:flex-row">
+                                <span class="p-input-icon-left">
+                                    <i class="pi pi-search"></i>
+                                    <input pInputText type="text" #filter (input)="onGlobalFilter(mggdt, $event)"
+                                        placeholder="Search Keyword" class="w-full" />
+                                </span>
+                                <div>
+                                    <button type="button" label="Export" pButton pRipple
+                                        icon="fa-solid fa-cloud-arrow-down" (click)="manager_group_export()"
+                                        class="p-button-success"></button>
+                                </div>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <th pSortableColumn="{{col}}" class="uppercase" *ngFor="let col of columns">
+                                    {{col}}
+                                    <p-sortIcon field="{{col}}">
+                                    </p-sortIcon>
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns" let-editing="editing"
+                            let-ri="rowIndex">
+                            <tr [pEditableRow]="rowData">
+
+                                <td *ngFor="let col of columns">
+                                    {{rowData[col]}}
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="10">No data found.</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </ng-template>
+    </p-tabPanel>
+
+    <!-- MT5 Group Tab -->
+    <p-tabPanel>
+        <ng-template pTemplate="header">
+            <i class="fa-duotone fa-circle-2 mr-2"></i>
+            <span class="uppercase">MT5 Group</span>
+        </ng-template>
+        <ng-template pTemplate="body">
+            <p-dialog [(visible)]="clone_mt5_group_dialog" appendTo="body" [modal]="true"
+                [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '35vw'}" [closable]="false"
+                [showHeader]="false">
+                <div class="flex flex-column align-items-center my-4">
+                    <span
+                        class="flex align-items-center justify-content-center bg-pink-100 text-pink-800 mr-3 border-circle mb-3"
+                        style="width:64px;height:64px">
+                        <i class="pi pi-check text-5xl"></i>
+                    </span>
+                    <div class="font-bold text-xl uppercase mb-3 text-900"> New Group Clonning </div>
+                </div>
+                <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                    <span class="uppercase text-bold"> Group Name </span>
+                    <input type="text" pInputText id="group_name" [(ngModel)]="new_group_name" />
+                </div>
+
+                <ng-template pTemplate="footer">
+                    <div class=" border-top-1 surface-border pt-3 flex">
+                        <button pButton pRipple icon="pi pi-times" (click)="cancel_clone_mt5_group_clonning()"
+                            label="Cancel" class="p-button-outlined w-6 mr-2"></button>
+                        <button pButton pRipple icon="pi pi-check" (click)="confirm_clone_mt5_group_clonning()"
+                            label="Save" class="w-6 ml-2"></button>
+                    </div>
+                </ng-template>
+            </p-dialog>
+
+            <div class="grid mt-1">
+                <div class="col-12 p-0">
+                    <p-table #gdt [value]="groups_row_data" [columns]="groups_col_header" [resizableColumns]="true"
+                        [autoLayout]="true" editMode="row" dataKey="Group" [rowHover]="true" [rows]="10"
+                        [paginator]="true" responsiveLayout="scroll"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        [showCurrentPageReport]="true"
+                        [globalFilterFields]="['Group', 'Group_layer1', 'Group_layer2', 'Group_layer3', 'Group_layer4', 'Server', 'PermissionsFlags', 'AuthMode', 'AuthPasswordMin', 'AuthOTPMode', 'Company', 'CompanyPage', 'Currency', 'CurrencyDigits', 'TradeFlags', 'TradeTransferMode', 'TradeInterestrate', 'TradeVirtualCredit', 'MarginMode', 'MarginFlags', 'MarginSOMode', 'MarginFreeMode', 'MarginCall', 'MarginStopOut', 'MarginFreeProfitMode', 'DemoLeverage', 'DemoDeposit', 'DemoTradesClean', 'LimitHistory', 'LimitOrders', 'LimitSymbols', 'LimitPositions', 'LimitPositionsVolume', 'user_count']"
+                        [filterDelay]="100">
+                        <ng-template pTemplate="caption">
+                            <div class="flex justify-content-between flex-column sm:flex-row mb-2">
+                                <h5 class="p-mb-0 p-mr-2 p-mt-1">Group List</h5>
+                                <div class="flex">
+                                    <p-button icon="fa-solid fa-arrow-rotate-right"
+                                        styleClass="mr-2 p-button-refresh p-button-outlined"
+                                        (click)="refreshTable()"></p-button>
+                                    <span class="p-input-icon-left">
+                                        <i class="pi pi-search"></i>
+                                        <input pInputText type="text" #filter (input)="onGlobalFilter(gdt, $event)"
+                                            placeholder="Search Keyword" class="w-full" />
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="flex justify-content-between flex-column sm:flex-row">
+                                <p-selectButton [options]="groups_tables_list"
+                                    (onOptionClick)="groups_table_name_switched($event)"
+                                    [(ngModel)]="groups_switched_table_list_name" optionLabel="label"
+                                    optionValue="value"></p-selectButton>
+                                <div>
+                                    <button type="button" label="Export" pButton pRipple
+                                        icon="fa-solid fa-cloud-arrow-down" (click)="groups_export()"
+                                        class="p-button-success"></button>
+                                </div>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr *ngIf="groups_row_data != []">
+                                <th style="width: 3rem;" *ngIf="groups_switched_table_list_name === 'summary'">View
+                                </th>
+                                <th style="width: 3rem;" *ngIf="groups_switched_table_list_name === 'details'">Clone
+                                </th>
+                                <th pSortableColumn="{{col}}" class="uppercase" *ngFor="let col of columns">
+                                    {{col}}
+                                    <p-sortIcon field="{{col}}">
+                                    </p-sortIcon>
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns" let-editing="editing"
+                            let-ri="rowIndex">
+                            <tr [pEditableRow]="rowData" *ngIf="groups_row_data != []">
+                                <td *ngIf="groups_switched_table_list_name === 'summary'"
+                                    style="width: 3rem; text-align: center;">
+                                    <button pButton pRipple type="button" icon="fa-solid fa-user-magnifying-glass"
+                                        class="p-button-rounded p-button-success p-button-text"
+                                        (click)="count_details.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }); get_mt5_groupwise_user_detail(rowData)"></button>
+                                </td>
+                                <td *ngIf="groups_switched_table_list_name === 'details'"
+                                    style="width: 3rem; text-align: center;">
+                                    <button pButton pRipple type="button" icon="fa-duotone fa-clone"
+                                        (click)="cloned_mt5_groupwise_dialog(rowData)"
+                                        class="p-button-rounded p-button-info p-button-text"></button>
+                                </td>
+                                <td *ngFor="let col of columns">
+                                    {{rowData[col]}}
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="10">No data found.</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+
+            <div class="grid mt-3">
+                <div class="col-12 p-0" #count_details>
+                    <p-table #gcnt [value]="groupwise_user_row_data" [columns]="groupwise_user_col_header"
+                        [resizableColumns]="true" [autoLayout]="true" editMode="row" dataKey="userid" [rowHover]="true"
+                        [rows]="10" [paginator]="true" responsiveLayout="scroll"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        [showCurrentPageReport]="true"
+                        [globalFilterFields]="['Login', 'Group', 'Name', 'FirstName', 'LastName', 'MiddleName', 'Country', 'Phone', 'Email', 'Agent', 'commission']"
+                        *ngIf="count_details_table" [filterDelay]="100">
+                        <ng-template pTemplate="caption">
+                            <div class="flex justify-content-between flex-column sm:flex-row mb-2">
+                                <h5 class="p-mb-0 p-mr-2 p-mt-1">Groupwise User Details</h5>
+                                <div class="flex">
+                                    <p-button icon="fa-solid fa-arrow-rotate-right"
+                                        styleClass="p-button-refresh p-button-outlined"
+                                        (click)="refreshTable()"></p-button>
+                                </div>
+                            </div>
+                            <div class="flex justify-content-between flex-column sm:flex-row">
+                                <span class="p-input-icon-left">
+                                    <i class="pi pi-search"></i>
+                                    <input pInputText type="text" #filter (input)="onGlobalFilter(gcnt, $event)"
+                                        placeholder="Search Keyword" class="w-full" />
+                                </span>
+                                <div>
+                                    <button type="button" label="Export" pButton pRipple
+                                        icon="fa-solid fa-cloud-arrow-down" (click)="groupwise_user_export()"
+                                        class="p-button-success"></button>
+                                </div>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+
+                                <th pSortableColumn="{{col}}" class="uppercase" *ngFor="let col of columns">
+                                    {{col}}
+                                    <p-sortIcon field="{{col}}">
+                                    </p-sortIcon>
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns" let-editing="editing"
+                            let-ri="rowIndex">
+                            <tr [pEditableRow]="rowData">
+
+                                <td *ngFor="let col of columns">
+                                    {{rowData[col]}}
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="10">No data found.</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </ng-template>
+    </p-tabPanel>
+
+    <!-- MT5 User Tab -->
+    <p-tabPanel>
+        <ng-template pTemplate="header">
+            <i class="fa-duotone fa-circle-3 mr-2"></i>
+            <span class="uppercase">MT5 User</span>
+        </ng-template>
+        <ng-template pTemplate="body">
+            <p-dialog [(visible)]="clone_mt5_user_dialog" appendTo="body" [modal]="true"
+                [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '35vw'}" [closable]="false"
+                [showHeader]="false">
+                <div class="flex flex-column align-items-center my-4">
+                    <span
+                        class="flex align-items-center justify-content-center bg-pink-100 text-pink-800 mr-3 border-circle mb-3"
+                        style="width:64px;height:64px">
+                        <i class="pi pi-check text-5xl"></i>
+                    </span>
+                    <div class="font-bold text-xl uppercase mb-3 text-900"> New User Clonning </div>
+                </div>
+                <form [formGroup]="clone_user_form">
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> Login </span>
+                        <p-inputNumber id="loginid" formControlName="loginid" placeholder="Login"
+                            [min]="0"></p-inputNumber>
+                    </div>
+
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> Name </span>
+                        <input type="text" pInputText id="username" formControlName="username" placeholder="Username" />
+                    </div>
+
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> First Name </span>
+                        <input type="text" pInputText id="firstname" formControlName="firstname"
+                            placeholder="Firstname" />
+                    </div>
+
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> Last Name </span>
+                        <input type="text" pInputText id="lastname" formControlName="lastname" placeholder="Lastname" />
+                    </div>
+
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> Email </span>
+                        <input type="text" pInputText id="useremail" formControlName="useremail"
+                            placeholder="useremail" />
+                    </div>
+                </form>
+
+                <ng-template pTemplate="footer">
+                    <div class=" border-top-1 surface-border pt-3 flex">
+                        <button pButton pRipple icon="pi pi-times" (click)="cancel_mt5_user_clonning()" label="Cancel"
+                            class="p-button-outlined w-6 mr-2"></button>
+                        <button pButton pRipple icon="pi pi-check" (click)="confirm_mt5_user_clonning()" label="Save"
+                            class="w-6 ml-2"></button>
+                    </div>
+                </ng-template>
+            </p-dialog>
+
+            <p-dialog [(visible)]="create_new_mt5_user_dialog" appendTo="body" [modal]="true"
+                [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '35vw'}" [closable]="false"
+                [showHeader]="false">
+                <div class="flex flex-column align-items-center my-4">
+                    <span
+                        class="flex align-items-center justify-content-center bg-pink-100 text-pink-800 mr-3 border-circle mb-3"
+                        style="width:64px;height:64px">
+                        <i class="pi pi-check text-5xl"></i>
+                    </span>
+                    <div class="font-bold text-xl uppercase mb-3 text-900"> New User Creation </div>
+                </div>
+                <form [formGroup]="create_new_mt5_user_form">
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> Login </span>
+                        <p-inputNumber id="loginid" formControlName="loginid" placeholder="Login"
+                            [min]="0"></p-inputNumber>
+                    </div>
+
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> Name </span>
+                        <input type="text" pInputText id="username" formControlName="username" placeholder="Username" />
+                    </div>
+
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> First Name </span>
+                        <input type="text" pInputText id="firstname" formControlName="firstname"
+                            placeholder="Firstname" />
+                    </div>
+
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> Last Name </span>
+                        <input type="text" pInputText id="lastname" formControlName="lastname" placeholder="Lastname" />
+                    </div>
+
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> Email </span>
+                        <input type="text" pInputText id="useremail" formControlName="useremail"
+                            placeholder="useremail" />
+                    </div>
+
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> State </span>
+                        <p-inputNumber id="state" formControlName="state" placeholder="State" [min]="0"></p-inputNumber>
+                    </div>
+
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> zipcode </span>
+                        <p-inputNumber id="zipcode" formControlName="zipcode" placeholder="zipcode"
+                            [min]="0"></p-inputNumber>
+                    </div>
+
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> Group </span>
+                        <input type="text" pInputText id="grpname" formControlName="grpname" placeholder="Group Name" />
+                    </div>
+
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> leverage </span>
+                        <p-inputNumber id="leverage" formControlName="leverage" placeholder="leverage"
+                            [min]="0"></p-inputNumber>
+                    </div>
+
+                </form>
+
+                <ng-template pTemplate="footer">
+                    <div class=" border-top-1 surface-border pt-3 flex">
+                        <button pButton pRipple icon="pi pi-times" (click)="cancel_mt5_user_creation()" label="Cancel"
+                            class="p-button-outlined w-6 mr-2"></button>
+                        <button pButton pRipple icon="pi pi-check" (click)="confirm_mt5_user_creation()" label="Save"
+                            class="w-6 ml-2"></button>
+                    </div>
+                </ng-template>
+            </p-dialog>
+
+            <p-dialog [(visible)]="update_mt5_user_dialog" appendTo="body" [modal]="true"
+                [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '35vw'}" [closable]="false"
+                [showHeader]="false">
+                <div class="flex flex-column align-items-center my-4">
+                    <span
+                        class="flex align-items-center justify-content-center bg-pink-100 text-pink-800 mr-3 border-circle mb-3"
+                        style="width:64px;height:64px">
+                        <i class="pi pi-check text-5xl"></i>
+                    </span>
+                    <div class="font-bold text-xl uppercase mb-3 text-900"> Update User </div>
+                </div>
+                <form [formGroup]="update_mt5_user_form">
+
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> State </span>
+                        <p-inputNumber id="state" formControlName="state" placeholder="State" [min]="0"></p-inputNumber>
+                    </div>
+
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> zipcode </span>
+                        <p-inputNumber id="zipcode" formControlName="zipcode" placeholder="zipcode"
+                            [min]="0"></p-inputNumber>
+                    </div>
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> leverage </span>
+                        <p-inputNumber id="leverage" formControlName="leverage" placeholder="leverage"
+                            [min]="0"></p-inputNumber>
+                    </div>
+
+                </form>
+
+                <ng-template pTemplate="footer">
+                    <div class=" border-top-1 surface-border pt-3 flex">
+                        <button pButton pRipple icon="pi pi-times" (click)="cancel_mt5_user_updation()" label="Cancel"
+                            class="p-button-outlined w-6 mr-2"></button>
+                        <button pButton pRipple icon="pi pi-check" (click)="confirm_mt5_user_updation()" label="Save"
+                            class="w-6 ml-2"></button>
+                    </div>
+                </ng-template>
+            </p-dialog>
+
+            <p-dialog [(visible)]="dummy_id_confirmation_dialog" appendTo="body" [modal]="true"
+                [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '35vw'}" [closable]="false"
+                [showHeader]="false">
+                <div class="flex flex-column align-items-center my-4">
+                    <span
+                        class="flex align-items-center justify-content-center bg-orange-100 text-orange-800 mr-3 border-circle mb-3"
+                        style="width:64px;height:64px">
+                        <i class="pi pi-check text-5xl"></i>
+                    </span>
+                    <div class="font-bold text-xl uppercase mb-3 text-900">Confirmation </div>
+                    <div> Are you sure you want to Create Dummy record of the selected data? </div>
+                </div>
+
+                <ng-template pTemplate="footer">
+                    <div class=" border-top-1 surface-border pt-3 flex">
+                        <button pButton pRipple icon="pi pi-times" (click)="cancel_dummy_id_confirmation()"
+                            label="Cancel" class="p-button-outlined w-6 mr-2"></button>
+                        <button pButton pRipple icon="pi pi-check" (click)="confirm_dummy_id_confirmation()"
+                            label="Save" class="w-6 ml-2"></button>
+                    </div>
+                </ng-template>
+            </p-dialog>
+
+            <div class="grid mt-1">
+                <div class="col-12 p-0">
+                    <p-table #udt [value]="users_row_data" [columns]="users_col_header" [resizableColumns]="true"
+                        [autoLayout]="true" editMode="row" dataKey="userid" [rowHover]="true" [rows]="10"
+                        [paginator]="true" responsiveLayout="scroll"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        [showCurrentPageReport]="true"
+                        [globalFilterFields]="['Login', 'Group', 'CertSerialNumber', 'Rights', 'MQID', 'Registration', 'LastAccess', 'LastPassChange', 'LastIP', 'Name', 'FirstName', 'LastName', 'MiddleName', 'Company', 'Account', 'Country', 'Language', 'ClientID', 'City', 'State', 'ZipCode', 'Address', 'Phone', 'Email', 'ID', 'Status', 'Comment', 'Color', 'PhonePassword', 'Leverage', 'Agent', 'LimitPositions', 'LimitOrders', 'CurrencyDigits', 'Balance', 'Credit', 'InterestRate', 'CommissionDaily', 'CommissionMonthly', 'CommissionAgentDaily', 'CommissionAgentMonthly', 'BalancePrevDay', 'BalancePrevMonth', 'EquityPrevDay', 'EquityPrevMonth', 'TradeAccounts', 'LeadCampaign', 'LeadSource', 'commission']"
+                        [filterDelay]="100">
+                        <ng-template pTemplate="caption">
+                            <div class="flex justify-content-between flex-column sm:flex-row mb-2">
+                                <h5 class="p-mb-0 p-mr-2 p-mt-1">MT5 ID List</h5>
+                                <div class="flex">
+                                    <p-button icon="fa-solid fa-arrow-rotate-right"
+                                        styleClass="p-button-refresh p-button-outlined"
+                                        (click)="refreshTable()"></p-button>
+                                </div>
+                            </div>
+                            <div class="flex justify-content-between flex-column sm:flex-row">
+                                <div>
+                                    <span class="p-input-icon-left">
+                                        <i class="pi pi-search"></i>
+                                        <input pInputText type="text" #filter (input)="onGlobalFilter(udt, $event)"
+                                            placeholder="Search Keyword" class="w-full" />
+                                    </span>
+                                </div>
+                                <div class="flex">
+                                    <button type="button" label="Export" pButton pRipple
+                                        icon="fa-solid fa-cloud-arrow-down" (click)="users_export()"
+                                        class="p-button-success"></button>
+                                    <button type="button" label="New" pButton pRipple icon="fa-solid fa-plus"
+                                        (click)="create_new_mt5_user()" class="p-button-primary ml-2"></button>
+
+                                </div>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr *ngIf="users_row_data !== []">
+                                <th style="width: 3rem;">
+                                    Update
+                                </th>
+                                <th style="width: 3rem;">
+                                    Clone
+                                </th>
+                                <th style="width: 3rem;">
+                                    Dummy
+                                    ID
+                                </th>
+                                <th pSortableColumn="{{col}}" class="uppercase" *ngFor="let col of columns">
+                                    {{col}}
+                                    <p-sortIcon field="{{col}}">
+                                    </p-sortIcon>
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns" let-editing="editing"
+                            let-ri="rowIndex">
+                            <tr [pEditableRow]="rowData" *ngIf="users_row_data !== []">
+                                <td style="width: 3rem; text-align: center;">
+                                    <button pButton pRipple type="button" icon="fa-duotone fa-pen-to-square"
+                                        class="p-button-rounded p-button-success p-button-text"
+                                        (click)="update_selected_mt5_user(rowData)"></button>
+                                </td>
+                                <td style="width: 3rem; text-align: center;">
+                                    <button pButton pRipple type="button" icon="fa-duotone fa-clone"
+                                        class="p-button-rounded p-button-info p-button-text"
+                                        (click)="clone_mt5_new_user(rowData)"></button>
+                                </td>
+                                <td style="width: 3rem; text-align: center;">
+                                    <button pButton pRipple type="button" icon="fa-duotone fa-user-robot"
+                                        class="p-button-rounded p-button-primary p-button-text"
+                                        (click)="create_mt5_dummy_user(rowData)"></button>
+                                </td>
+
+                                <td *ngFor="let col of columns">
+                                    {{rowData[col]}}
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="10">No data found.</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </ng-template>
+    </p-tabPanel>
+
+    <!-- Venus Manager Tab -->
+    <p-tabPanel>
+        <ng-template pTemplate="header">
+            <i class="fa-duotone fa-circle-4 mr-2"></i>
+            <span class="uppercase">Venus Manager</span>
+        </ng-template>
+        <ng-template pTemplate="body">
+            <p-dialog [(visible)]="add_new_venus_manager_dialog" appendTo="body" [modal]="true"
+                [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}" [closable]="false"
+                [showHeader]="false">
+                <div class="flex flex-column align-items-center my-4">
+                    <span
+                        class="flex align-items-center justify-content-center bg-pink-100 text-pink-800 mr-3 border-circle mb-3"
+                        style="width:64px;height:64px">
+                        <i class="pi pi-check text-5xl"></i>
+                    </span>
+                    <div class="font-bold text-xl uppercase mb-3 text-900"> Venus Manager Configuration </div>
+                </div>
+                <form [formGroup]="venus_manager_form">
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> Manager Name </span>
+                        <input type="text" pInputText id="group_name" formControlName="manager_name"
+                            placeholder="Name" />
+                    </div>
+
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> Manager Description </span>
+                        <input type="text" pInputText id="group_desc" formControlName="manager_desc"
+                            placeholder="Description" />
+                    </div>
+
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> Chat ID </span>
+                        <p-inputNumber id="chatid" formControlName="chatid" [useGrouping]="false" placeholder="Chat ID"
+                            [min]="0"></p-inputNumber>
+                    </div>
+
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> Command Access </span>
+                        <p-inputSwitch styleClass="mx-3" formControlName="cmd_access"
+                            [(ngModel)]="selected_cmd_access"></p-inputSwitch>
+                    </div>
+
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> Expiry Date </span>
+                        <p-calendar formControlName="exp_date" [showIcon]="true" inputId="exp_date" [showTime]="false"
+                            (onSelect)="onExpSelect($event)" [touchUI]="true" dateFormat="dd-mm-yy"
+                            placeholder="dd-mm-yyyy">
+                        </p-calendar>
+                    </div>
+                </form>
+
+                <ng-template pTemplate="footer">
+                    <div class=" border-top-1 surface-border pt-3 flex">
+                        <button pButton pRipple icon="pi pi-times" (click)="cancel_new_venus_manager_charges()"
+                            label="Cancel" class="p-button-outlined w-6 mr-2"></button>
+                        <button pButton pRipple icon="pi pi-check" (click)="confirm_new_venus_manager_charges()"
+                            label="Save" class="w-6 ml-2"></button>
+                    </div>
+                </ng-template>
+            </p-dialog>
+            <p-dialog [(visible)]="update_venus_manager_dialog" appendTo="body" [modal]="true"
+                [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '35vw'}" [closable]="false"
+                [showHeader]="false">
+                <div class="flex flex-column align-items-center my-4">
+                    <span
+                        class="flex align-items-center justify-content-center bg-pink-100 text-pink-800 mr-3 border-circle mb-3"
+                        style="width:64px;height:64px">
+                        <i class="pi pi-check text-5xl"></i>
+                    </span>
+                    <div class="font-bold text-xl uppercase mb-3 text-900"> Update Venus Manager </div>
+                </div>
+                <form [formGroup]="update_venus_manager_form">
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> Chat ID </span>
+                        <p-inputNumber id="chatid" formControlName="chatid" [(ngModel)]="prev_chat_id"
+                            placeholder="Chat ID" [useGrouping]="false" [min]="0"></p-inputNumber>
+                    </div>
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> Command Access </span>
+                        <p-inputSwitch styleClass="mx-3" formControlName="cmd_access"
+                            [(ngModel)]="selected_cmd_access"></p-inputSwitch>
+                    </div>
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> Expiry Date </span>
+                        <p-calendar formControlName="exp_date" [showIcon]="true" inputId="update_exp_date"
+                            [showTime]="false" [(ngModel)]="expdate" (onSelect)="onExpSelect($event)" [touchUI]="true"
+                            dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy">
+                        </p-calendar>
+                    </div>
+                </form>
+
+                <ng-template pTemplate="footer">
+                    <div class=" border-top-1 surface-border pt-3 flex">
+                        <button pButton pRipple icon="pi pi-times" (click)="cancel_venus_manager_updation()"
+                            label="Cancel" class="p-button-outlined w-6 mr-2"></button>
+                        <button pButton pRipple icon="pi pi-check" (click)="confirm_venus_manager_updation()"
+                            label="Save" class="w-6 ml-2"></button>
+                    </div>
+                </ng-template>
+            </p-dialog>
+            <p-dialog [(visible)]="venus_manager_delete_dialog" appendTo="body" [modal]="true"
+                [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '35vw'}" [closable]="false"
+                [showHeader]="false">
+                <div class="flex flex-column align-items-center my-4">
+                    <span
+                        class="flex align-items-center justify-content-center bg-orange-100 text-orange-800 mr-3 border-circle mb-3"
+                        style="width:64px;height:64px">
+                        <i class="pi pi-check text-5xl"></i>
+                    </span>
+                    <div class="font-bold text-xl uppercase mb-3 text-900">Delete Confirmation </div>
+                    <div> Are you sure you want to delete the selected data? </div>
+                </div>
+
+                <ng-template pTemplate="footer">
+                    <div class=" border-top-1 surface-border pt-3 flex">
+                        <button pButton pRipple icon="pi pi-times" (click)="cancel_venus_manager_delete()"
+                            label="Cancel" class="p-button-outlined w-6 mr-2"></button>
+                        <button pButton pRipple icon="pi pi-check" (click)="confirm_venus_manager_delete()" label="Save"
+                            class="w-6 ml-2"></button>
+                    </div>
+                </ng-template>
+            </p-dialog>
+            <p-dialog [(visible)]="venus_manager_mapped_data_delete_dialog" appendTo="body" [modal]="true"
+                [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '35vw'}" [closable]="false"
+                [showHeader]="false">
+                <div class="flex flex-column align-items-center my-4">
+                    <span
+                        class="flex align-items-center justify-content-center bg-orange-100 text-orange-800 mr-3 border-circle mb-3"
+                        style="width:64px;height:64px">
+                        <i class="pi pi-check text-5xl"></i>
+                    </span>
+                    <div class="font-bold text-xl uppercase mb-3 text-900">Delete Confirmation </div>
+                    <div> Are you sure you want to delete the selected data? </div>
+                </div>
+
+                <ng-template pTemplate="footer">
+                    <div class=" border-top-1 surface-border pt-3 flex">
+                        <button pButton pRipple icon="pi pi-times" (click)="cancel_venus_manager_mapped_data_delete()"
+                            label="Cancel" class="p-button-outlined w-6 mr-2"></button>
+                        <button pButton pRipple icon="pi pi-check" (click)="confirm_venus_manager_mapped_data_delete()"
+                            label="Save" class="w-6 ml-2"></button>
+                    </div>
+                </ng-template>
+            </p-dialog>
+            <div class="grid mt-1">
+                <div class="col-12 p-0">
+                    <p-table #vg [value]="venus_manager_row_data" [columns]="venus_manager_col_header"
+                        [resizableColumns]="true" [autoLayout]="true" editMode="row" dataKey="userid" [rowHover]="true"
+                        [rows]="10" [paginator]="true" responsiveLayout="scroll"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        [globalFilterFields]="['managerid', 'managername', 'managerdesc', 'chatid', 'user_count']"
+                        [filterDelay]="100">
+                        <ng-template pTemplate="caption">
+                            <div class="flex justify-content-between align-items-center flex-column sm:flex-row mb-2">
+                                <h5 class="m-0">Venus Manager List</h5>
+                                <div class="flex">
+                                    <p-button icon="fa-solid fa-arrow-rotate-right"
+                                        styleClass="mr-2 p-button-refresh p-button-outlined"
+                                        (click)="refreshTable()"></p-button>
+                                    <p-button pRipple label="New" icon="pi pi-plus" styleClass="p-button-primary"
+                                        (click)="open_new_venus_manager_config()">
+                                    </p-button>
+                                </div>
+                            </div>
+                            <div class="flex justify-content-between flex-column sm:flex-row">
+                                <div>
+                                    <span class="p-input-icon-left">
+                                        <i class="pi pi-search"></i>
+                                        <input pInputText type="text" #filter (input)="onGlobalFilter(vg, $event)"
+                                            placeholder="Search Keyword" class="w-full" />
+                                    </span>
+                                </div>
+                                <div>
+                                    <button type="button" label="Export" pButton pRipple
+                                        icon="fa-solid fa-cloud-arrow-down" (click)="venus_manager_export()"
+                                        class="p-button-success ml-2"></button>
+                                </div>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr *ngIf="venus_manager_row_data !== []">
+                                <th style="width: 3rem;">Delete</th>
+                                <th style="width: 3rem;">Update</th>
+                                <th style="width: 3rem;">Map</th>
+                                <th style="width: 3rem;">View</th>
+                                <th pSortableColumn="{{col}}" class="uppercase" *ngFor="let col of columns">
+                                    {{col}}
+                                    <p-sortIcon field="{{col}}">
+                                    </p-sortIcon>
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns" let-editing="editing"
+                            let-ri="rowIndex">
+                            <tr [pEditableRow]="rowData" *ngIf="venus_manager_row_data !== []">
+                                <td class="text-center">
+                                    <button pButton pRipple type="button" icon="fa-solid fa-trash"
+                                        (click)="delete_venus_manager_data(rowData)"
+                                        class="p-button-rounded p-button-text p-button-danger"></button>
+                                </td>
+
+                                <td style="width: 3rem; text-align: center;">
+                                    <button pButton pRipple type="button" icon="fa-duotone fa-pen-to-square"
+                                        class="p-button-rounded p-button-success p-button-text"
+                                        (click)="update_selected_venus_manager_data(rowData)"></button>
+                                </td>
+
+                                <td class="text-center">
+                                    <button pButton pRipple type="button" icon="fa-solid fa-link"
+                                        (click)="map_venus_manager_detail(rowData)"
+                                        class="p-button-rounded p-button-text p-button-info"></button>
+                                </td>
+                                <td class="text-center">
+                                    <button pButton pRipple type="button" icon="fa-solid fa-user-magnifying-glass"
+                                        (click)="view_venus_manager_detail(rowData)"
+                                        class="p-button-rounded p-button-text p-button-success"></button>
+                                </td>
+                                <td *ngFor="let col of columns">
+                                    {{rowData[col]}}
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="10">No data found.</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+            <div class="grid mt-3">
+                <div class="col-12 p-0">
+                    <p-table #vgm [value]="venus_manager_mapping_row_data" [columns]="venus_manager_mapping_col_header"
+                        [resizableColumns]="true" [autoLayout]="true" editMode="row" dataKey="Login" [rowHover]="true"
+                        [rows]="10" [paginator]="true" responsiveLayout="scroll" *ngIf="venus_manager_mapping_table"
+                        [(selection)]="selected_vg_mapping_data"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        [globalFilterFields]="['Login', 'Group', 'Name', 'FirstName', 'LastName', 'MiddleName', 'Country', 'City', 'State', 'ZipCode', 'Address', 'Phone', 'Email']"
+                        [filterDelay]="100">
+                        <ng-template pTemplate="caption">
+                            <div class="flex justify-content-between align-items-center flex-column sm:flex-row mb-2">
+                                <h5 class="m-0">Venus Manager Mapping List</h5>
+                                <div class="flex">
+                                    <p-button icon="fa-solid fa-arrow-rotate-right"
+                                        styleClass="mr-2 p-button-refresh p-button-outlined"
+                                        (click)="refreshTable()"></p-button>
+                                    <span class="p-input-icon-left">
+                                        <i class="pi pi-search"></i>
+                                        <input pInputText type="text" #filter (input)="onGlobalFilter(vgm, $event)"
+                                            placeholder="Search Keyword" class="w-full" />
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="flex justify-content-between flex-column sm:flex-row">
+                                <div class="flex">
+                                    <!-- <p-selectButton [options]="client_id_tables_list"
+                                                (onOptionClick)="client_id_table_name_switched($event)"
+                                                [(ngModel)]="client_id_switched_table_list_name" optionLabel="label"
+                                                optionValue="value"></p-selectButton> -->
+                                    <button type="button" label="Map User" pButton pRipple
+                                        [disabled]="!selected_vg_mapping_data || !selected_vg_mapping_data.length"
+                                        (click)="save_venus_manager_mapping_detail()"
+                                        class="p-button-info ml-2"></button>
+                                </div>
+                                <div>
+                                    <button type="button" label="Export" pButton pRipple
+                                        icon="fa-solid fa-cloud-arrow-down" (click)="venus_manager_mapping_export()"
+                                        class="p-button-success ml-2"></button>
+                                </div>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr *ngIf="venus_manager_row_data !== []">
+                                <th style="width: 3rem;">
+                                    <p-tableHeaderCheckbox
+                                        (click)="group_mapping_select_all(venus_manager_mapping_row_data)">
+                                    </p-tableHeaderCheckbox>
+                                </th>
+                                <th pSortableColumn="Login">Login<p-sortIcon field="Login"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="Group">Group<p-sortIcon field="Group"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="Name">Name<p-sortIcon field="Name"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="FirstName">FirstName<p-sortIcon field="FirstName"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="LastName">LastName<p-sortIcon field="LastName"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="MiddleName">MiddleName<p-sortIcon field="MiddleName"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="Country">Country<p-sortIcon field="Country"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="City">City<p-sortIcon field="City"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="State">State<p-sortIcon field="State"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="ZipCode">ZipCode<p-sortIcon field="ZipCode"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="Address">Address<p-sortIcon field="Address"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="Phone">Phone<p-sortIcon field="Phone"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="Email">Email<p-sortIcon field="Email"></p-sortIcon>
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns">
+                            <tr [pEditableRow]="rowData" *ngIf="venus_manager_mapping_row_data !== []">
+                                <td class="text-center">
+                                    <p-tableCheckbox [value]="rowData" (click)="group_mapping_row_check(rowData)">
+                                    </p-tableCheckbox>
+                                </td>
+                                <td> {{ rowData.Login }} </td>
+                                <td> {{ rowData.Group }} </td>
+                                <td> {{ rowData.Name}} </td>
+                                <td> {{ rowData.FirstName}} </td>
+                                <td> {{ rowData.LastName}} </td>
+                                <td> {{ rowData.MiddleName}} </td>
+                                <td> {{ rowData.Country}} </td>
+                                <td> {{ rowData.City}} </td>
+                                <td> {{ rowData.State}} </td>
+                                <td> {{ rowData.ZipCode}} </td>
+                                <td> {{ rowData.Address}} </td>
+                                <td> {{ rowData.Phone}} </td>
+                                <td> {{ rowData.Email}} </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="10">No data found.</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+            <div class="grid mt-1">
+                <div class="col-12 p-0">
+                    <p-table #view_vgm [value]="view_venus_manager_mapping_row_data"
+                        [columns]="view_venus_manager_mapping_col_header" [resizableColumns]="true" [autoLayout]="true"
+                        editMode="row" dataKey="userid" [rowHover]="true" [rows]="10" [paginator]="true"
+                        responsiveLayout="scroll" *ngIf="view_venus_manager_mapping_table"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        [globalFilterFields]="['id', 'Login', 'Group', 'Name', 'FirstName', 'LastName', 'MiddleName', 'Country', 'Phone', 'Email', 'Agent', 'commission', 'groupid']"
+                        [filterDelay]="100">
+                        <ng-template pTemplate="caption">
+                            <div class="flex justify-content-between align-items-center flex-column sm:flex-row mb-2">
+                                <h5 class="m-0">Venus Manager Mapped List</h5>
+                                <div class="flex">
+                                    <p-button icon="fa-solid fa-arrow-rotate-right"
+                                        styleClass="mr-2 p-button-refresh p-button-outlined"
+                                        (click)="refreshTable()"></p-button>
+                                    <span class="p-input-icon-left">
+                                        <i class="pi pi-search"></i>
+                                        <input pInputText type="text" #filter (input)="onGlobalFilter(view_vgm, $event)"
+                                            placeholder="Search Keyword" class="w-full" />
+                                    </span>
+                                </div>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr *ngIf="view_venus_manager_mapping_row_data !== []">
+                                <th style="width: 3rem;">Delete</th>
+                                <th pSortableColumn="{{col}}" class="uppercase" *ngFor="let col of columns">
+                                    {{col}}
+                                    <p-sortIcon field="{{col}}">
+                                    </p-sortIcon>
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns" let-editing="editing"
+                            let-ri="rowIndex">
+                            <tr [pEditableRow]="rowData" *ngIf="view_venus_manager_mapping_row_data !== []">
+                                <td class="text-center">
+                                    <button pButton pRipple type="button" icon="fa-solid fa-trash"
+                                        (click)="delete_venus_manager_mapped_data(rowData)"
+                                        class="p-button-rounded p-button-text p-button-danger"></button>
+                                </td>
+                                <td *ngFor="let col of columns">
+                                    {{rowData[col]}}
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="10">No data found.</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </ng-template>
+    </p-tabPanel>
+
+    <!-- Bot Access Tab -->
+    <p-tabPanel>
+        <ng-template pTemplate="header">
+            <i class="fa-duotone fa-circle-4 mr-2"></i>
+            <span class="uppercase">Bot Access</span>
+        </ng-template>
+        <ng-template pTemplate="body">
+            <p-dialog [(visible)]="add_new_bot_access_dialog" appendTo="body" [modal]="true"
+                [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '35vw', height: '70vh'}"
+                [closable]="false" [showHeader]="false">
+                <div class="flex flex-column align-items-center my-4">
+                    <span
+                        class="flex align-items-center justify-content-center bg-pink-100 text-pink-800 mr-3 border-circle mb-3"
+                        style="width:64px;height:64px">
+                        <i class="pi pi-check text-5xl"></i>
+                    </span>
+                    <div class="font-bold text-xl uppercase mb-3 text-900"> BOT Access Configuration </div>
+                </div>
+                <form [formGroup]="bot_access_form">
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> BOT Type </span>
+                        <p-multiSelect [options]="bot_types_list" formControlName="bot_type" styleClass="mr-5"
+                            (onChange)="on_bot_type_select($event)" defaultLabel="Type"></p-multiSelect>
+                    </div>
+                </form>
+
+                <ng-template pTemplate="footer">
+                    <div class=" border-top-1 surface-border pt-3 flex">
+                        <button pButton pRipple icon="pi pi-times" (click)="cancel_new_bot_access_charges()"
+                            label="Cancel" class="p-button-outlined w-6 mr-2"></button>
+                        <button pButton pRipple icon="pi pi-check" (click)="confirm_new_bot_access_charges()"
+                            label="Save" class="w-6 ml-2"></button>
+                    </div>
+                </ng-template>
+            </p-dialog>
+            <p-dialog [(visible)]="update_bot_access_dialog" appendTo="body" [modal]="true"
+                [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '35vw', height: '65vh'}"
+                [closable]="false" [showHeader]="false">
+                <div class="flex flex-column align-items-center my-4">
+                    <span
+                        class="flex align-items-center justify-content-center bg-pink-100 text-pink-800 mr-3 border-circle mb-3"
+                        style="width:64px;height:64px">
+                        <i class="pi pi-check text-5xl"></i>
+                    </span>
+                    <div class="font-bold text-xl uppercase mb-3 text-900"> Update BOT Access </div>
+                </div>
+                <form [formGroup]="update_bot_access_form">
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> BOT Type </span>
+                        <p-dropdown [options]="bot_types_list" [autoDisplayFirst]="false" placeholder="Type"
+                            formControlName="bot_type">
+                        </p-dropdown>
+                    </div>
+                </form>
+
+                <ng-template pTemplate="footer">
+                    <div class=" border-top-1 surface-border pt-3 flex">
+                        <button pButton pRipple icon="pi pi-times" (click)="cancel_bot_access_updation()" label="Cancel"
+                            class="p-button-outlined w-6 mr-2"></button>
+                        <button pButton pRipple icon="pi pi-check" (click)="confirm_bot_access_updation()" label="Save"
+                            class="w-6 ml-2"></button>
+                    </div>
+                </ng-template>
+            </p-dialog>
+            <p-dialog [(visible)]="bot_access_delete_dialog" appendTo="body" [modal]="true"
+                [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '35vw'}" [closable]="false"
+                [showHeader]="false">
+                <div class="flex flex-column align-items-center my-4">
+                    <span
+                        class="flex align-items-center justify-content-center bg-orange-100 text-orange-800 mr-3 border-circle mb-3"
+                        style="width:64px;height:64px">
+                        <i class="pi pi-check text-5xl"></i>
+                    </span>
+                    <div class="font-bold text-xl uppercase mb-3 text-900">Delete Confirmation </div>
+                    <div> Are you sure you want to delete the selected data? </div>
+                </div>
+
+                <ng-template pTemplate="footer">
+                    <div class=" border-top-1 surface-border pt-3 flex">
+                        <button pButton pRipple icon="pi pi-times" (click)="cancel_bot_access_delete()" label="Cancel"
+                            class="p-button-outlined w-6 mr-2"></button>
+                        <button pButton pRipple icon="pi pi-check" (click)="confirm_bot_access_delete()" label="Save"
+                            class="w-6 ml-2"></button>
+                    </div>
+                </ng-template>
+            </p-dialog>
+            <div class="grid mt-1">
+                <div class="col-12 p-0">
+                    <p-table #ba [value]="bot_access_row_data" [columns]="bot_access_col_header"
+                        *ngIf="bot_access_mt5_manager_table" [resizableColumns]="true" [autoLayout]="true"
+                        editMode="row" dataKey="Login" [rowHover]="true" scrollHeight="280px" [paginator]="false"
+                        responsiveLayout="scroll" [showCurrentPageReport]="false" [(selection)]="selected_bot_access"
+                        [globalFilterFields]="['Login', 'Name', 'Mailbox', 'Server']" [filterDelay]="200">
+                        <ng-template pTemplate="caption">
+                            <div class="flex justify-content-between flex-column sm:flex-row mb-2">
+                                <h5 class="p-mb-0 p-mr-2 p-mt-1">Bot Access Details</h5>
+                                <div class="flex">
+                                    <p-button icon="fa-solid fa-arrow-rotate-right"
+                                        styleClass="mr-2 p-button-refresh p-button-outlined"
+                                        (click)="refreshTable()"></p-button>
+                                    <span class="p-input-icon-left">
+                                        <i class="pi pi-search"></i>
+                                        <input pInputText type="text" #filter (input)="onGlobalFilter(ba, $event)"
+                                            placeholder="Search Keyword" class="w-full" />
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="flex justify-content-between flex-column sm:flex-row">
+                                <p-selectButton [options]="group_names_mapping_tables_list"
+                                    (onOptionClick)="bot_access_table_switched($event)" class="mr-2"
+                                    [(ngModel)]="bot_access_switched_table_list_name" optionLabel="label"
+                                    optionValue="value"></p-selectButton>
+
+                                <button type="button" label="New" pButton pRipple icon="fa-solid fa-plus"
+                                    (click)="new_bot_access_detail()"></button>
+
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <th style="width: 3rem;"></th>
+                                <th style="width: 3rem;">View</th>
+                                <th pSortableColumn="Login">Login<p-sortIcon field="Login"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="Name">Name<p-sortIcon field="Name"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="Mailbox">Mailbox<p-sortIcon field="Mailbox"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="Server">Server<p-sortIcon field="Server"></p-sortIcon>
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns" let-editing="editing"
+                            let-ri="rowIndex">
+                            <tr [pEditableRow]="rowData">
+                                <td class="text-center">
+                                    <p-tableCheckbox [value]="rowData"
+                                        (click)="bot_access_check_checked(rowData)"></p-tableCheckbox>
+                                </td>
+
+                                <td class="text-center">
+                                    <button pButton pRipple type="button" icon="fa-solid fa-user-magnifying-glass"
+                                        (click)="view_bot_access_detail(rowData)"
+                                        class="p-button-rounded p-button-text p-button-success"></button>
+                                </td>
+                                <td>{{rowData.Login}}</td>
+                                <td>{{rowData.Name}}</td>
+                                <td>{{rowData.Mailbox}}</td>
+                                <td>{{rowData.Server}}</td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="10">No data found.</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                    <p-table #ba [value]="bot_access_row_data" [columns]="bot_access_col_header"
+                        *ngIf="bot_access_venus_manager_table" [resizableColumns]="true" [autoLayout]="true"
+                        editMode="row" dataKey="managerid" [rowHover]="true" scrollHeight="280px" [paginator]="false"
+                        responsiveLayout="scroll" [showCurrentPageReport]="false"
+                        [(selection)]="selected_manager_group_data"
+                        [globalFilterFields]="['managerid', 'managername', 'managerdesc', 'chatid', 'user_count']"
+                        [filterDelay]="200">
+                        <ng-template pTemplate="caption">
+                            <div class="flex justify-content-between flex-column sm:flex-row mb-2">
+                                <h5 class="p-mb-0 p-mr-2 p-mt-1">Bot Access Details</h5>
+                                <div class="flex">
+                                    <p-button icon="fa-solid fa-arrow-rotate-right"
+                                        styleClass="mr-2 p-button-refresh p-button-outlined"
+                                        (click)="refreshTable()"></p-button>
+                                    <span class="p-input-icon-left">
+                                        <i class="pi pi-search"></i>
+                                        <input pInputText type="text" #filter (input)="onGlobalFilter(ba, $event)"
+                                            placeholder="Search Keyword" class="w-full" />
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="flex justify-content-between flex-column sm:flex-row">
+                                <p-selectButton [options]="group_names_mapping_tables_list"
+                                    (onOptionClick)="bot_access_table_switched($event)" class="mr-2"
+                                    [(ngModel)]="bot_access_switched_table_list_name" optionLabel="label"
+                                    optionValue="value"></p-selectButton>
+
+                                <button type="button" label="New" pButton pRipple icon="fa-solid fa-plus"
+                                    (click)="new_bot_access_detail()"></button>
+
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr *ngIf="command_mapping_row_data !== []">
+                                <th style="width: 3rem;"></th>
+                                <th style="width: 3rem;">View</th>
+                                <th pSortableColumn="{{col}}" class="uppercase" *ngFor="let col of columns">
+                                    {{col}}
+                                    <p-sortIcon field="{{col}}">
+                                    </p-sortIcon>
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns" let-editing="editing"
+                            let-ri="rowIndex">
+                            <tr [pEditableRow]="rowData" *ngIf="command_mapping_row_data !== []">
+                                <td class="text-center">
+                                    <p-tableCheckbox [value]="rowData"
+                                        (click)="bot_access_check_checked(rowData)"></p-tableCheckbox>
+                                </td>
+
+                                <td class="text-center">
+                                    <button pButton pRipple type="button" icon="fa-solid fa-user-magnifying-glass"
+                                        (click)="view_bot_access_detail(rowData)"
+                                        class="p-button-rounded p-button-text p-button-success"></button>
+                                </td>
+                                <td *ngFor="let col of columns">
+                                    {{rowData[col]}}
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="10">No data found.</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+
+            <div class="grid mt-3" *ngIf="view_bot_access_details_table">
+                <div class="col-12 p-0">
+                    <p-table #bdt [value]="bot_access_details_row_data" [columns]="bot_access_details_col_header"
+                        [resizableColumns]="true" [autoLayout]="true" editMode="row" dataKey="userid" [rowHover]="true"
+                        [rows]="10" [paginator]="true" responsiveLayout="scroll"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        [showCurrentPageReport]="true" [globalFilterFields]="[]" [filterDelay]="100">
+                        <ng-template pTemplate="caption">
+                            <div class="flex justify-content-between flex-column sm:flex-row mb-2">
+                                <h5 class="p-mb-0 p-mr-2 p-mt-1">Selected BOT Access Details</h5>
+                                <div class="flex">
+                                    <p-button icon="fa-solid fa-arrow-rotate-right"
+                                        styleClass="p-button-refresh p-button-outlined"
+                                        (click)="refreshTable()"></p-button>
+                                </div>
+                            </div>
+                            <div class="flex justify-content-between flex-column sm:flex-row">
+                                <div>
+                                    <span class="p-input-icon-left">
+                                        <i class="pi pi-search"></i>
+                                        <input pInputText type="text" #filter (input)="onGlobalFilter(bdt, $event)"
+                                            placeholder="Search Keyword" class="w-full" />
+                                    </span>
+                                </div>
+                                <div>
+                                    <button type="button" label="Export" pButton pRipple
+                                        icon="fa-solid fa-cloud-arrow-down" (click)="bot_access_export()"
+                                        class="p-button-success"></button>
+                                </div>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <th style="width: 3rem;">Delete</th>
+                                <th style="width: 3rem;">Update</th>
+                                <th pSortableColumn="{{col}}" class="uppercase" *ngFor="let col of columns">
+                                    {{col}}
+                                    <p-sortIcon field="{{col}}">
+                                    </p-sortIcon>
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns">
+                            <tr [pEditableRow]="rowData">
+                                <td class="text-center">
+                                    <button pButton pRipple type="button" icon="fa-solid fa-trash"
+                                        (click)="delete_bot_access_data(rowData)"
+                                        class="p-button-rounded p-button-text p-button-danger"></button>
+                                </td>
+                                <td style="width: 3rem; text-align: center;">
+                                    <button pButton pRipple type="button" icon="fa-duotone fa-pen-to-square"
+                                        class="p-button-rounded p-button-success p-button-text"
+                                        (click)="update_bot_access_data(rowData)"></button>
+                                </td>
+                                <td *ngFor="let col of columns">
+                                    {{rowData[col]}}
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="10">No data found.</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </ng-template>
+    </p-tabPanel>
+
+    <!-- Bot Command Tab -->
+    <p-tabPanel>
+        <ng-template pTemplate="header">
+            <i class="fa-duotone fa-circle-5 mr-2"></i>
+            <span class="uppercase">BOT Command</span>
+        </ng-template>
+        <ng-template pTemplate="body">
+            <p-dialog [(visible)]="add_new_command_name_dialog" appendTo="body" [modal]="true"
+                [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '35vw', height: '32vw'}"
+                [closable]="false" [showHeader]="false">
+                <div class="flex flex-column align-items-center my-4">
+                    <span
+                        class="flex align-items-center justify-content-center bg-pink-100 text-pink-800 mr-3 border-circle mb-3"
+                        style="width:64px;height:64px">
+                        <i class="pi pi-check text-5xl"></i>
+                    </span>
+                    <div class="font-bold text-xl uppercase mb-3 text-900"> Command Name Configuration </div>
+                </div>
+                <form [formGroup]="command_name_form">
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> Command Type </span>
+                        <p-dropdown [options]="command_types" placeholder="Type"
+                            formControlName="command_types"></p-dropdown>
+                    </div>
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> Command Name </span>
+                        <input type="text" pInputText id="command_name" formControlName="command_name"
+                            placeholder="Name" />
+                    </div>
+
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> Command Description </span>
+                        <input type="text" pInputText id="command_desc" formControlName="command_desc"
+                            placeholder="Description" />
+                    </div>
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> Commission Type </span>
+                        <p-dropdown [options]="commission_types" placeholder="Type"
+                            formControlName="commission_type"></p-dropdown>
+                    </div>
+                </form>
+
+                <ng-template pTemplate="footer">
+                    <div class=" border-top-1 surface-border pt-3 flex">
+                        <button pButton pRipple icon="pi pi-times" (click)="cancel_new_command_name_charges()"
+                            label="Cancel" class="p-button-outlined w-6 mr-2"></button>
+                        <button pButton pRipple icon="pi pi-check" (click)="confirm_new_command_name_charges()"
+                            label="Save" class="w-6 ml-2"></button>
+                    </div>
+                </ng-template>
+            </p-dialog>
+            <p-dialog [(visible)]="venus_command_name_delete_dialog" appendTo="body" [modal]="true"
+                [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '35vw'}" [closable]="false"
+                [showHeader]="false">
+                <div class="flex flex-column align-items-center my-4">
+                    <span
+                        class="flex align-items-center justify-content-center bg-orange-100 text-orange-800 mr-3 border-circle mb-3"
+                        style="width:64px;height:64px">
+                        <i class="pi pi-check text-5xl"></i>
+                    </span>
+                    <div class="font-bold text-xl uppercase mb-3 text-900">Delete Confirmation </div>
+                    <div> Are you sure you want to delete the selected data? </div>
+                </div>
+
+                <ng-template pTemplate="footer">
+                    <div class=" border-top-1 surface-border pt-3 flex">
+                        <button pButton pRipple icon="pi pi-times" (click)="cancel_venus_command_name_delete()"
+                            label="Cancel" class="p-button-outlined w-6 mr-2"></button>
+                        <button pButton pRipple icon="pi pi-check" (click)="confirm_venus_command_name_delete()"
+                            label="Save" class="w-6 ml-2"></button>
+                    </div>
+                </ng-template>
+            </p-dialog>
+            <p-dialog [(visible)]="update_venus_cmd_dialog" appendTo="body" [modal]="true"
+                [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '35vw', height: '25rem'}"
+                [closable]="false" [showHeader]="false">
+                <div class="flex flex-column align-items-center my-4">
+                    <span
+                        class="flex align-items-center justify-content-center bg-pink-100 text-pink-800 mr-3 border-circle mb-3"
+                        style="width:64px;height:64px">
+                        <i class="pi pi-check text-5xl"></i>
+                    </span>
+                    <div class="font-bold text-xl uppercase mb-3 text-900"> Update Venus Command Name </div>
+                </div>
+                <form [formGroup]="update_venus_cmd_form">
+                    <div class="flex justify-content-between align-items-center pl-5 pr-5 mb-3">
+                        <span class="uppercase text-bold"> Commission Type </span>
+                        <p-dropdown [options]="commission_types" placeholder="Type"
+                            formControlName="commission_type"></p-dropdown>
+                    </div>
+                </form>
+
+                <ng-template pTemplate="footer">
+                    <div class=" border-top-1 surface-border pt-3 flex">
+                        <button pButton pRipple icon="pi pi-times" (click)="cancel_venus_cmd_updation()" label="Cancel"
+                            class="p-button-outlined w-6 mr-2"></button>
+                        <button pButton pRipple icon="pi pi-check" (click)="confirm_venus_cmd_updation()" label="Save"
+                            class="w-6 ml-2"></button>
+                    </div>
+                </ng-template>
+            </p-dialog>
+            <div class="grid mt-1">
+                <div class="col-12 p-0">
+                    <p-table #cndt [value]="command_name_row_data" [columns]="command_name_col_header"
+                        [resizableColumns]="true" [autoLayout]="true" editMode="row" dataKey="userid" [rowHover]="true"
+                        [rows]="10" [paginator]="true" responsiveLayout="scroll"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        [showCurrentPageReport]="true"
+                        [globalFilterFields]="['commandid', 'commandname', 'commanddesc']" [filterDelay]="100">
+                        <ng-template pTemplate="caption">
+                            <div class="flex justify-content-between flex-column sm:flex-row mb-2">
+                                <h5 class="p-mb-0 p-mr-2 p-mt-1">BOT Command List</h5>
+                                <div class="flex">
+                                    <p-button icon="fa-solid fa-arrow-rotate-right"
+                                        styleClass="mr-2 p-button-refresh p-button-outlined"
+                                        (click)="refreshTable()"></p-button>
+                                    <p-button pRipple label="New" icon="pi pi-plus" styleClass="p-button-primary"
+                                        (click)="open_new_command_name_config()">
+                                    </p-button>
+                                </div>
+                            </div>
+                            <div class="flex justify-content-between flex-column sm:flex-row">
+                                <div>
+                                    <span class="p-input-icon-left">
+                                        <i class="pi pi-search"></i>
+                                        <input pInputText type="text" #filter (input)="onGlobalFilter(cndt, $event)"
+                                            placeholder="Search Keyword" class="w-full" />
+                                    </span>
+                                </div>
+                                <div>
+                                    <button type="button" label="Export" pButton pRipple
+                                        icon="fa-solid fa-cloud-arrow-down" (click)="command_name_export()"
+                                        class="p-button-success"></button>
+                                </div>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr *ngIf="command_name_row_data !== []">
+                                <th style="width: 3rem;">Delete</th>
+                                <th style="width: 3rem;">Update</th>
+                                <th pSortableColumn="{{col}}" class="uppercase" *ngFor="let col of columns">
+                                    {{col}}
+                                    <p-sortIcon field="{{col}}">
+                                    </p-sortIcon>
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns">
+                            <tr [pEditableRow]="rowData" *ngIf="command_name_row_data !== []">
+                                <td class="text-center">
+                                    <button pButton pRipple type="button" icon="fa-solid fa-trash"
+                                        (click)="delete_venus_command_name_data(rowData)"
+                                        class="p-button-rounded p-button-text p-button-danger"></button>
+                                </td>
+                                <td style="width: 3rem; text-align: center;">
+                                    <button pButton pRipple type="button" icon="fa-duotone fa-pen-to-square"
+                                        class="p-button-rounded p-button-success p-button-text"
+                                        (click)="update_venus_cmd_name_data(rowData)"></button>
+                                </td>
+                                <td *ngFor="let col of columns">
+                                    {{rowData[col]}}
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="10">No data found.</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </ng-template>
+    </p-tabPanel>
+
+    <!-- Command Mapping Tab -->
+    <p-tabPanel>
+        <ng-template pTemplate="header">
+            <i class="fa-duotone fa-circle-6 mr-2"></i>
+            <span class="uppercase">Command Mapping</span>
+        </ng-template>
+        <ng-template pTemplate="body">
+            <p-dialog [(visible)]="venus_cgm_delete_dialog" appendTo="body" [modal]="true"
+                [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '35vw'}" [closable]="false"
+                [showHeader]="false">
+                <div class="flex flex-column align-items-center my-4">
+                    <span
+                        class="flex align-items-center justify-content-center bg-orange-100 text-orange-800 mr-3 border-circle mb-3"
+                        style="width:64px;height:64px">
+                        <i class="pi pi-check text-5xl"></i>
+                    </span>
+                    <div class="font-bold text-xl uppercase mb-3 text-900">Delete Confirmation </div>
+                    <div> Are you sure you want to delete the selected data? </div>
+                </div>
+
+                <ng-template pTemplate="footer">
+                    <div class=" border-top-1 surface-border pt-3 flex">
+                        <button pButton pRipple icon="pi pi-times" (click)="cancel_venus_cgm_delete()" label="Cancel"
+                            class="p-button-outlined w-6 mr-2"></button>
+                        <button pButton pRipple icon="pi pi-check" (click)="confirm_venus_cgm_delete()" label="Save"
+                            class="w-6 ml-2"></button>
+                    </div>
+                </ng-template>
+            </p-dialog>
+
+            <div class="grid mt-1">
+                <div class="col-7 p-0">
+                    <p-table #mtg [value]="command_mapping_row_data" [columns]="command_mapping_col_header"
+                        *ngIf="mt5_group_name_mapping_table" [resizableColumns]="true" [autoLayout]="true"
+                        editMode="row" dataKey="Login" [rowHover]="true" scrollHeight="280px" [paginator]="false"
+                        responsiveLayout="scroll" [showCurrentPageReport]="false"
+                        [(selection)]="selected_manager_group_data"
+                        [globalFilterFields]="['Login', 'Name', 'Mailbox', 'Server']" [filterDelay]="200">
+                        <ng-template pTemplate="caption">
+                            <div class="flex justify-content-between flex-column sm:flex-row mb-2">
+                                <h5 class="p-mb-0 p-mr-2 p-mt-1">Group Name</h5>
+                                <div class="flex">
+                                    <p-button icon="fa-solid fa-arrow-rotate-right"
+                                        styleClass="mr-2 p-button-refresh p-button-outlined"
+                                        (click)="refreshTable()"></p-button>
+                                    <span class="p-input-icon-left">
+                                        <i class="pi pi-search"></i>
+                                        <input pInputText type="text" #filter (input)="onGlobalFilter(mtg, $event)"
+                                            placeholder="Search Keyword" class="w-full" />
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="flex justify-content-between flex-column sm:flex-row">
+                                <p-selectButton [options]="group_names_mapping_tables_list"
+                                    (onOptionClick)="group_names_mapping_table_switched($event)" class="mr-2"
+                                    [(ngModel)]="group_names_switched_table_list_name" optionLabel="label"
+                                    optionValue="value"></p-selectButton>
+
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <th style="width: 2rem">
+                                    Select
+                                </th>
+                                <th pSortableColumn="Login">Login<p-sortIcon field="Login"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="Name">Name<p-sortIcon field="Name"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="Mailbox">Mailbox<p-sortIcon field="Mailbox"></p-sortIcon>
+                                </th>
+                                <th pSortableColumn="Server">Server<p-sortIcon field="Server"></p-sortIcon>
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns" let-editing="editing"
+                            let-ri="rowIndex">
+                            <tr [pEditableRow]="rowData">
+                                <td class="text-center">
+                                    <p-tableCheckbox [value]="rowData"
+                                        (click)="command_group_mapping_check_checked(rowData)"></p-tableCheckbox>
+                                </td>
+                                <td>{{rowData.Login}}</td>
+                                <td>{{rowData.Name}}</td>
+                                <td>{{rowData.Mailbox}}</td>
+                                <td>{{rowData.Server}}</td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="10">No data found.</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                    <p-table #vgdt [value]="command_mapping_row_data" [columns]="command_mapping_col_header"
+                        *ngIf="venus_manager_name_mapping_table" [resizableColumns]="true" [autoLayout]="true"
+                        editMode="row" dataKey="managerid" [rowHover]="true" scrollHeight="280px" [paginator]="false"
+                        responsiveLayout="scroll" [showCurrentPageReport]="false"
+                        [(selection)]="selected_manager_group_data"
+                        [globalFilterFields]="['managerid', 'managername', 'managerdesc', 'chatid', 'user_count']"
+                        [filterDelay]="200">
+                        <ng-template pTemplate="caption">
+                            <div class="flex justify-content-between flex-column sm:flex-row mb-2">
+                                <h5 class="p-mb-0 p-mr-2 p-mt-1">Group Name</h5>
+                                <div class="flex">
+                                    <p-button icon="fa-solid fa-arrow-rotate-right"
+                                        styleClass="mr-2 p-button-refresh p-button-outlined"
+                                        (click)="refreshTable()"></p-button>
+                                    <span class="p-input-icon-left">
+                                        <i class="pi pi-search"></i>
+                                        <input pInputText type="text" #filter (input)="onGlobalFilter(vgdt, $event)"
+                                            placeholder="Search Keyword" class="w-full" />
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="flex justify-content-between flex-column sm:flex-row">
+                                <p-selectButton [options]="group_names_mapping_tables_list"
+                                    (onOptionClick)="group_names_mapping_table_switched($event)"
+                                    [(ngModel)]="group_names_switched_table_list_name" optionLabel="label"
+                                    optionValue="value"></p-selectButton>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr *ngIf="command_mapping_row_data !== []">
+                                <th style="width: 2rem">
+                                    Select
+                                </th>
+                                <th pSortableColumn="{{col}}" class="uppercase" *ngFor="let col of columns">
+                                    {{col}}
+                                    <p-sortIcon field="{{col}}">
+                                    </p-sortIcon>
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns" let-editing="editing"
+                            let-ri="rowIndex">
+                            <tr [pEditableRow]="rowData" *ngIf="command_mapping_row_data !== []">
+                                <td class="text-center">
+                                    <p-tableCheckbox [value]="rowData"
+                                        (click)="command_group_mapping_check_checked(rowData)"></p-tableCheckbox>
+                                </td>
+                                <td *ngFor="let col of columns">
+                                    {{rowData[col]}}
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="10">No data found.</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+
+                <div class="col-5 p-0 pl-3">
+                    <p-table #cmdt [value]="venus_command_mapping_row_data" [columns]="venus_command_mapping_col_header"
+                        [autoLayout]="true" editMode="row" dataKey="commandid" [rowHover]="true" [rows]="10"
+                        responsiveLayout="scroll" [resizableColumns]="true" [(selection)]="selected_command_name_data"
+                        [globalFilterFields]="['commandid', 'commandname', 'commanddesc']" [filterDelay]="100">
+                        <ng-template pTemplate="caption">
+                            <div class="flex justify-content-between align-items-center flex-column sm:flex-row mb-2">
+                                <h5 class="m-0">Command Name</h5>
+                                <div class="flex">
+                                    <p-button icon="fa-solid fa-arrow-rotate-right"
+                                        styleClass="p-button-refresh p-button-outlined"
+                                        (click)="refreshTable()"></p-button>
+                                </div>
+                            </div>
+                            <div class="flex justify-content-between flex-column sm:flex-row">
+                                <span class="p-input-icon-left">
+                                    <i class="pi pi-search"></i>
+                                    <input pInputText type="text" #filter (input)="onGlobalFilter(cmdt, $event)"
+                                        placeholder="Search Keyword" class="w-full" />
+                                </span>
+                                <div class="flex">
+                                    <p-dropdown [options]="methods_list" [(ngModel)]="selected_method"
+                                        placeholder="Method" optionLabel="label"></p-dropdown>
+                                    <p-button pRipple label="Commit" [disabled]="selected_method == undefined"
+                                        icon="pi pi-plus" styleClass="p-button-success ml-2"
+                                        (click)="save_venus_command_mapping_detail()">
+                                    </p-button>
+                                </div>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr *ngIf="venus_command_mapping_row_data !== []">
+                                <th>
+                                    <!-- <p-tableHeaderCheckbox
+                                            (click)="command_name_mapping_check_select_all(venus_command_mapping_row_data)"></p-tableHeaderCheckbox> -->
+                                </th>
+                                <th pSortableColumn="{{col}}" class="uppercase" *ngFor="let col of columns">
+                                    {{col}}
+                                    <p-sortIcon field="{{col}}">
+                                    </p-sortIcon>
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns" let-editing="editing"
+                            let-ri="rowIndex">
+                            <tr [pEditableRow]="rowData" *ngIf="venus_command_mapping_row_data !== []">
+                                <td class="text-center" style="width: 2rem;">
+                                    <p-tableRadioButton [value]="rowData"
+                                        (click)="command_name_mapping_check_checked(rowData)"></p-tableRadioButton>
+                                </td>
+                                <td *ngFor="let col of columns">
+                                    {{rowData[col]}}
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="10">No data found.</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+
+
+            </div>
+
+            <div class="grid mt-3">
+                <div class="col-12 p-0">
+                    <p-table #cgmdt [value]="venus_cgm_row_data" [columns]="venus_cgm_col_header"
+                        [resizableColumns]="true" [autoLayout]="true" editMode="row" dataKey="userid" [rowHover]="true"
+                        [rows]="10" [paginator]="true" responsiveLayout="scroll"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        [showCurrentPageReport]="true"
+                        [globalFilterFields]="['id', 'commandid', 'commandname', 'groupname', 'grouptype', 'method', 'commanddesc']"
+                        [filterDelay]="100">
+                        <ng-template pTemplate="caption">
+                            <div class="flex justify-content-between flex-column sm:flex-row mb-2">
+                                <h5 class="p-mb-0 p-mr-2 p-mt-1">Venus Command Mapping Details</h5>
+                                <div class="flex">
+                                    <p-button icon="fa-solid fa-arrow-rotate-right"
+                                        styleClass="p-button-refresh p-button-outlined"
+                                        (click)="refreshTable()"></p-button>
+                                </div>
+                            </div>
+                            <div class="flex justify-content-between flex-column sm:flex-row">
+                                <div>
+                                    <span class="p-input-icon-left">
+                                        <i class="pi pi-search"></i>
+                                        <input pInputText type="text" #filter (input)="onGlobalFilter(cgmdt, $event)"
+                                            placeholder="Search Keyword" class="w-full" />
+                                    </span>
+                                </div>
+                                <div>
+                                    <button type="button" label="Export" pButton pRipple
+                                        icon="fa-solid fa-cloud-arrow-down" (click)="venus_cgm_export()"
+                                        class="p-button-success"></button>
+                                </div>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr *ngIf="venus_cgm_row_data !== []">
+                                <th style="width: 3rem;">Delete</th>
+                                <th pSortableColumn="{{col}}" class="uppercase" *ngFor="let col of columns">
+                                    {{col}}
+                                    <p-sortIcon field="{{col}}">
+                                    </p-sortIcon>
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns" let-editing="editing"
+                            let-ri="rowIndex">
+                            <tr [pEditableRow]="rowData" *ngIf="venus_cgm_row_data !== []">
+                                <td class="text-center">
+                                    <button pButton pRipple type="button" icon="fa-solid fa-trash"
+                                        (click)="delete_venus_cgm_data(rowData)"
+                                        class="p-button-rounded p-button-text p-button-danger"></button>
+                                </td>
+                                <td *ngFor="let col of columns">
+                                    {{rowData[col]}}
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="10">No data found.</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </ng-template>
+    </p-tabPanel>
+
+</p-tabView>
+<!-- MT user Section -->
