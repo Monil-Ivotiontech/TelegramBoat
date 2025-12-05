@@ -212,29 +212,34 @@ class CustomerCommands(BaseCommand):
         try:
             positions = await mt5_service.get_positions_by_logins([customer_id])
 
+            title = f"Position of {customer_id}"
+            filename = f"{title.replace('/', '_')}.pdf"
+
             if not positions:
-                pdf = await pdf_service.generate_customer_position_pdf(
-                    empty_df, f"Position of {customer_id}"
-                )
-                return await self.generate_pdf_result(pdf, f"Position_{customer_id}.pdf")
+                pdf = await pdf_service.generate_customer_position_pdf(empty_df, title)
+                return await self.generate_pdf_result(pdf, filename)
 
             df = pd.DataFrame(positions)
             df = df[["Symbol", "TimeCreate", "Action", "Volume", "PriceOpen", "PriceCurrent", "Profit"]]
 
-            # Process
-            # Format TimeCreate (matches old bot)
+            # Convert TimeCreate - handle both int and string timestamps
+            df["TimeCreate"] = pd.to_numeric(df["TimeCreate"], errors='coerce')
             df["TimeCreate"] = pd.to_datetime(df["TimeCreate"], unit='s')
             df["TimeCreate"] = df["TimeCreate"].dt.strftime('%Y-%b-%d %H:%M:%S')
 
-            df["Volume"] = df["Volume"].astype(np.int64) / 10000
+            # Convert Action to int FIRST (before any other numeric operations)
             df["Action"] = df["Action"].astype(int)
+
+            # Convert Volume to int64 first, then divide
+            df["Volume"] = df["Volume"].astype(np.int64)
+            df["Volume"] = df["Volume"] / 10000
+
+            # Replace Action values with strings (convert to object first to avoid FutureWarning)
+            df["Action"] = df["Action"].astype(object)
             df.loc[df["Action"] == 0, "Action"] = "BUY"
             df.loc[df["Action"] == 1, "Action"] = "SELL"
 
-            df["PriceOpen"] = df["PriceOpen"].round(2)
-            df["PriceCurrent"] = df["PriceCurrent"].round(2)
-            df["Profit"] = df["Profit"].round(2)
-
+            # Rename columns first
             df = df.rename(columns={
                 "TimeCreate": "Time",
                 "Action": "Type",
@@ -243,13 +248,32 @@ class CustomerCommands(BaseCommand):
                 "Profit": "Profit&Loss",
             })
 
-            # Convert Profit&Loss to string for formatting
-            df["Profit&Loss"] = df["Profit&Loss"].apply(lambda x: f"{x:.2f}")
+            # Explicit type conversions BEFORE rounding (matches old bot)
+            df["Volume"] = df["Volume"].astype(float).round(2)
+            df["Price"] = df["Price"].astype(float).round(2)
+            df["Cur. Price"] = df["Cur. Price"].astype(float).round(2)
+            df["Profit&Loss"] = df["Profit&Loss"].astype(float).astype(int)
 
-            pdf = await pdf_service.generate_customer_position_pdf(
-                df, f"Position of {customer_id}"
+            # Add Total row (matches old bot)
+            sum_value = df["Profit&Loss"].sum()
+            sum_row = pd.DataFrame([{
+                "Symbol": "",
+                "Time": "",
+                "Type": "Total",
+                "Volume": "",
+                "Price": "",
+                "Cur. Price": "",
+                "Profit&Loss": sum_value,
+            }])
+            df = pd.concat([df, sum_row], ignore_index=True)
+
+            # Format Profit&Loss with currency formatting (matches old bot)
+            df["Profit&Loss"] = df["Profit&Loss"].apply(
+                lambda x: format_currency(x) if isinstance(x, (int, float)) and not pd.isna(x) else str(x)
             )
-            return await self.generate_pdf_result(pdf, f"Position_{customer_id}.pdf")
+
+            pdf = await pdf_service.generate_customer_position_pdf(df, title)
+            return await self.generate_pdf_result(pdf, filename)
 
         except Exception as e:
             self.logger.error(
@@ -257,10 +281,8 @@ class CustomerCommands(BaseCommand):
                 customer_id=customer_id,
                 error=str(e),
             )
-            pdf = await pdf_service.generate_customer_position_pdf(
-                empty_df, f"Position of {customer_id}"
-            )
-            return await self.generate_pdf_result(pdf, f"Position_{customer_id}.pdf")
+            pdf = await pdf_service.generate_customer_position_pdf(empty_df, title)
+            return await self.generate_pdf_result(pdf, filename)
 
     async def get_customer_trades(
         self,
@@ -275,7 +297,7 @@ class CustomerCommands(BaseCommand):
         )
 
         empty_df = pd.DataFrame(
-            columns=["Symbol", "Type", "Volume", "Price", "Profit&Loss"]
+            columns=["Time", "Symbol", "Type", "Entry", "Volume", "Price", "Reason", "Commission", "Profit&Loss"]
         )
 
         try:
@@ -295,46 +317,94 @@ class CustomerCommands(BaseCommand):
             from_ts = int(from_date.timestamp())
             to_ts = int(to_date.timestamp())
 
+            # Set title and filename to match selected option (like old bot)
+            title = f"{'Today' if period == 'today' else 'This Week'}'s Trades of {customer_id}"
+            filename = f"{title.replace('/', '_')}.pdf"
+
             deals = await mt5_service.get_deals_by_logins(
                 [customer_id], from_ts, to_ts
             )
 
             if not deals:
-                title = f"{'Today' if period == 'today' else 'This Week'}'s Trades of {customer_id}"
                 pdf = await pdf_service.generate_customer_position_pdf(empty_df, title)
-                return await self.generate_pdf_result(pdf, f"Trades_{customer_id}.pdf")
+                return await self.generate_pdf_result(pdf, filename)
 
             df = pd.DataFrame(deals)
-            
-            # Filter for actual trades (not deposits/withdrawals)
-            df = df[df["Action"].isin([0, 1])]
 
-            if df.empty:
-                title = f"{'Today' if period == 'today' else 'This Week'}'s Trades of {customer_id}"
-                pdf = await pdf_service.generate_customer_position_pdf(empty_df, title)
-                return await self.generate_pdf_result(pdf, f"Trades_{customer_id}.pdf")
+            # Select required columns (matches old bot)
+            df = df[["Time", "Symbol", "Action", "Entry", "Volume", "Price", "Reason", "Commission", "Profit"]]
 
-            df = df[["Symbol", "Action", "Volume", "Price", "Profit"]]
+            # Convert Time - handle both int and string timestamps
+            df["Time"] = pd.to_numeric(df["Time"], errors='coerce')
+            df["Time"] = pd.to_datetime(df["Time"], unit='s')
+            df = df.sort_values(by=['Time'], ascending=False)
+            df["Time"] = df["Time"].dt.strftime('%Y-%b-%d %H:%M:%S')
 
-            # Process
-            df["Volume"] = df["Volume"].astype(np.int64) / 10000
+            # Convert Volume to int64 first, then divide
+            df["Volume"] = df["Volume"].astype(np.int64)
+            df["Volume"] = df["Volume"] / 10000
+
+            # Convert Action, Entry, Reason to int
             df["Action"] = df["Action"].astype(int)
+            df["Entry"] = df["Entry"].astype(int)
+            df["Reason"] = df["Reason"].astype(int)
+
+            # Replace Action values (convert to object first to avoid FutureWarning)
+            df["Action"] = df["Action"].astype(object)
             df.loc[df["Action"] == 0, "Action"] = "BUY"
             df.loc[df["Action"] == 1, "Action"] = "SELL"
 
-            df["Price"] = df["Price"].round(2)
-            df["Profit"] = df["Profit"].round(2)
+            # Replace Entry values (convert to object first to avoid FutureWarning)
+            df["Entry"] = df["Entry"].astype(object)
+            df.loc[df["Entry"] == 0, "Entry"] = "IN"
+            df.loc[df["Entry"] == 1, "Entry"] = "OUT"
+            df.loc[df["Entry"] == 2, "Entry"] = "INOUT"
 
+            # Replace Reason values (convert to object first to avoid FutureWarning)
+            df["Reason"] = df["Reason"].astype(object)
+            df.loc[df["Reason"] == 0, "Reason"] = "CLIENT"
+            df.loc[df["Reason"] == 1, "Reason"] = "EXPERT"
+            df.loc[df["Reason"] == 2, "Reason"] = "DEALER"
+            df.loc[df["Reason"] == 16, "Reason"] = "MOBILE"
+
+            # Rename columns
             df = df.rename(columns={
                 "Action": "Type",
                 "Profit": "Profit&Loss",
             })
 
-            df["Profit&Loss"] = df["Profit&Loss"].apply(lambda x: f"{x:.2f}")
+            # Explicit type conversions BEFORE rounding (matches old bot)
+            df["Volume"] = df["Volume"].astype(float).round(2)
+            df["Price"] = df["Price"].astype(float).round(2)
+            df["Commission"] = df["Commission"].astype(float).astype(int)
+            df["Profit&Loss"] = df["Profit&Loss"].astype(float).astype(int)
 
-            title = f"{'Today' if period == 'today' else 'This Week'}'s Trades of {customer_id}"
+            # Add Total row (matches old bot)
+            commission_sum = df["Commission"].sum()
+            profit_sum = df["Profit&Loss"].sum()
+            sum_row = pd.DataFrame([{
+                "Time": "",
+                "Symbol": "",
+                "Type": "",
+                "Entry": "Total",
+                "Volume": "",
+                "Price": "",
+                "Reason": "",
+                "Commission": commission_sum,
+                "Profit&Loss": profit_sum,
+            }])
+            df = pd.concat([df, sum_row], ignore_index=True)
+
+            # Format Commission and Profit&Loss with currency formatting (matches old bot)
+            df["Commission"] = df["Commission"].apply(
+                lambda x: format_currency(x) if isinstance(x, (int, float)) and not pd.isna(x) else str(x)
+            )
+            df["Profit&Loss"] = df["Profit&Loss"].apply(
+                lambda x: format_currency(x) if isinstance(x, (int, float)) and not pd.isna(x) else str(x)
+            )
+
             pdf = await pdf_service.generate_customer_position_pdf(df, title)
-            return await self.generate_pdf_result(pdf, f"Trades_{customer_id}.pdf")
+            return await self.generate_pdf_result(pdf, filename)
 
         except Exception as e:
             self.logger.error(
@@ -343,9 +413,8 @@ class CustomerCommands(BaseCommand):
                 period=period,
                 error=str(e),
             )
-            title = f"{'Today' if period == 'today' else 'This Week'}'s Trades of {customer_id}"
             pdf = await pdf_service.generate_customer_position_pdf(empty_df, title)
-            return await self.generate_pdf_result(pdf, f"Trades_{customer_id}.pdf")
+            return await self.generate_pdf_result(pdf, filename)
 
     async def get_customer_bill(
         self,
@@ -359,6 +428,8 @@ class CustomerCommands(BaseCommand):
             period=period,
         )
 
+        empty_df = pd.DataFrame(columns=["P&L", "Volume", "Price", "Date"])
+
         try:
             # Calculate time range (matches old bot logic)
             now = datetime.now()
@@ -376,89 +447,127 @@ class CustomerCommands(BaseCommand):
             from_ts = int(from_date.timestamp())
             to_ts = int(to_date.timestamp())
 
+            # Set title and filename to match selected option (like old bot)
+            title = f"{'Today' if period == 'today' else 'This Week'}'s Bill of {customer_id}"
+            filename = f"{title.replace('/', '_')}.pdf"
+
             deals = await mt5_service.get_deals_by_logins(
                 [customer_id], from_ts, to_ts
             )
 
             if not deals:
-                empty_df = pd.DataFrame(columns=["Symbol", "Volume", "Price", "P&L"])
                 bills = [{
                     "symbol": "No Data",
                     "buy_df": empty_df,
                     "sell_df": empty_df,
-                    "result": "N/A",
-                    "grand_total": "0",
+                    "result": "Profit",
+                    "grand_total": 0,
                 }]
-                title = f"{'Today' if period == 'today' else 'This Week'}'s Bill of {customer_id}"
                 pdf = await pdf_service.generate_customer_bill_pdf(bills, title)
-                return await self.generate_pdf_result(pdf, f"Bill_{customer_id}.pdf")
+                return await self.generate_pdf_result(pdf, filename)
 
             df = pd.DataFrame(deals)
-            df = df[df["Action"].isin([0, 1])]
+            
+            # Select required columns (matches old bot)
+            df = df[["Time", "Symbol", "Action", "Volume", "Price", "Profit"]]
 
-            if df.empty:
-                empty_df = pd.DataFrame(columns=["Symbol", "Volume", "Price", "P&L"])
-                bills = [{
-                    "symbol": "No Data",
-                    "buy_df": empty_df,
-                    "sell_df": empty_df,
-                    "result": "N/A",
-                    "grand_total": "0",
-                }]
-                title = f"{'Today' if period == 'today' else 'This Week'}'s Bill of {customer_id}"
-                pdf = await pdf_service.generate_customer_bill_pdf(bills, title)
-                return await self.generate_pdf_result(pdf, f"Bill_{customer_id}.pdf")
+            # Convert Time - handle both int and string timestamps
+            df["Time"] = pd.to_numeric(df["Time"], errors='coerce')
+            df["Time"] = pd.to_datetime(df["Time"], unit='s')
+            df = df.sort_values(by=['Time'], ascending=False)
+            df["Time"] = df["Time"].dt.strftime('%d.%m %H:%M:%S')
 
-            # Group by symbol
+            # Convert Volume to int64 first, then divide
+            df["Volume"] = df["Volume"].astype(np.int64)
+            df["Volume"] = df["Volume"] / 10000
+
+            # Convert Action to int
+            df["Action"] = df["Action"].astype(int)
+
+            # Replace Action values (convert to object first to avoid FutureWarning)
+            df["Action"] = df["Action"].astype(object)
+            df.loc[df["Action"] == 0, "Action"] = "BUY"
+            df.loc[df["Action"] == 1, "Action"] = "SELL"
+
+            # Rename columns
+            df = df.rename(columns={"Action": "Type", "Profit": "P&L", "Time": "Date"})
+
+            # Explicit type conversions (matches old bot)
+            df["Volume"] = df["Volume"].astype(float).round(2)
+            df["Price"] = df["Price"].astype(float).round(2)
+            df["P&L"] = df["P&L"].astype(float).astype(int)
+
+            # Reorder columns
+            df = df[["Symbol", "Type", "P&L", "Volume", "Price", "Date"]]
+
+            # Group by symbol (matches old bot)
             bills = []
-            symbols = df["Symbol"].unique()
+            symbol_list = sorted(df["Symbol"].unique().tolist())
 
-            for symbol in symbols:
-                symbol_df = df[df["Symbol"] == symbol]
-
-                # Separate buy and sell
-                buy_df = symbol_df[symbol_df["Action"] == 0][["Time", "Volume", "Price", "Profit"]]
-                sell_df = symbol_df[symbol_df["Action"] == 1][["Time", "Volume", "Price", "Profit"]]
-
-                # Process volumes
-                buy_df = buy_df.copy()
-                sell_df = sell_df.copy()
-                
-                # Format Date (Time)
-                buy_df["Time"] = pd.to_datetime(buy_df["Time"], unit='s')
-                buy_df["Date"] = buy_df["Time"].dt.strftime('%d.%m %H:%M:%S')
-                
-                sell_df["Time"] = pd.to_datetime(sell_df["Time"], unit='s')
-                sell_df["Date"] = sell_df["Time"].dt.strftime('%d.%m %H:%M:%S')
-
-                buy_df["Volume"] = buy_df["Volume"].astype(np.int64) / 10000
-                sell_df["Volume"] = sell_df["Volume"].astype(np.int64) / 10000
-
-                buy_df = buy_df.rename(columns={"Profit": "P&L"})
-                sell_df = sell_df.rename(columns={"Profit": "P&L"})
-                
-                # Reorder columns to match old bot: ['P&L', 'Volume', 'Price', 'Date']
-                # Note: The old bot code had this order in dataframe selection, 
-                # but the PDF generation might expect specific columns.
-                # We will ensure these columns exist.
-                buy_df = buy_df[["P&L", "Volume", "Price", "Date"]]
-                sell_df = sell_df[["P&L", "Volume", "Price", "Date"]]
+            for sym in symbol_list:
+                tmp_sym_df = df[df["Symbol"] == sym]
+                buy_df = tmp_sym_df[tmp_sym_df["Type"] == "BUY"][["P&L", "Volume", "Price", "Date"]].copy()
+                sell_df = tmp_sym_df[tmp_sym_df["Type"] == "SELL"][["P&L", "Volume", "Price", "Date"]].copy()
 
                 # Calculate totals
-                total_pl = symbol_df["Profit"].sum()
-                result = "Profit" if total_pl >= 0 else "Loss"
+                total_buy = buy_df["P&L"].sum() if not buy_df.empty else 0
+                total_sell = sell_df["P&L"].sum() if not sell_df.empty else 0
+                grand_total = total_buy + total_sell
+
+                result = "Profit" if grand_total >= 0 else "Loss"
+
+                # Equalize DataFrame lengths (matches old bot)
+                if buy_df.shape[0] > sell_df.shape[0]:
+                    sell_df = sell_df.reindex(list(range(0, buy_df.shape[0]))).reset_index(drop=True)
+                elif buy_df.shape[0] < sell_df.shape[0]:
+                    buy_df = buy_df.reindex(list(range(0, sell_df.shape[0]))).reset_index(drop=True)
+
+                # Add Total row to buy_df (matches old bot)
+                buy_sum = buy_df["P&L"].sum() if not buy_df.empty else 0
+                buy_volume_sum = buy_df["Volume"].sum() if not buy_df.empty else 0
+                buy_sum_row = pd.DataFrame([{
+                    "P&L": buy_sum,
+                    "Volume": buy_volume_sum,
+                    "Price": "",
+                    "Date": "Total",
+                }])
+                buy_df = pd.concat([buy_df, buy_sum_row], ignore_index=True)
+
+                # Add Total row to sell_df (matches old bot)
+                sell_sum = sell_df["P&L"].sum() if not sell_df.empty else 0
+                sell_volume_sum = sell_df["Volume"].sum() if not sell_df.empty else 0
+                sell_sum_row = pd.DataFrame([{
+                    "P&L": sell_sum,
+                    "Volume": sell_volume_sum,
+                    "Price": "",
+                    "Date": "Total",
+                }])
+                sell_df = pd.concat([sell_df, sell_sum_row], ignore_index=True)
+
+                # Format P&L with currency formatting (matches old bot)
+                buy_df["P&L"] = buy_df["P&L"].apply(
+                    lambda x: format_currency(x) if isinstance(x, (int, float)) and not pd.isna(x) else str(x) if pd.notna(x) else " "
+                )
+                sell_df["P&L"] = sell_df["P&L"].apply(
+                    lambda x: format_currency(x) if isinstance(x, (int, float)) and not pd.isna(x) else str(x) if pd.notna(x) else " "
+                )
+
+                # Replace nan values with space (matches old bot)
+                buy_df = buy_df.fillna(" ")
+                sell_df = sell_df.fillna(" ")
+                buy_df = buy_df.replace("nan", " ")
+                sell_df = sell_df.replace("nan", " ")
 
                 bills.append({
-                    "symbol": symbol,
+                    "symbol": sym,
                     "buy_df": buy_df,
                     "sell_df": sell_df,
                     "result": result,
-                    "grand_total": format_currency(abs(total_pl)),
+                    "grand_total": grand_total,
                 })
 
-            title = f"{'Today' if period == 'today' else 'This Week'}'s Bill of {customer_id}"
             pdf = await pdf_service.generate_customer_bill_pdf(bills, title)
-            return await self.generate_pdf_result(pdf, f"Bill_{customer_id}.pdf")
+            return await self.generate_pdf_result(pdf, filename)
 
         except Exception as e:
             self.logger.error(
@@ -467,15 +576,13 @@ class CustomerCommands(BaseCommand):
                 period=period,
                 error=str(e),
             )
-            empty_df = pd.DataFrame(columns=["Symbol", "Volume", "Price", "P&L"])
             bills = [{
                 "symbol": "Error",
                 "buy_df": empty_df,
                 "sell_df": empty_df,
                 "result": "N/A",
-                "grand_total": "0",
+                "grand_total": 0,
             }]
-            title = f"{'Today' if period == 'today' else 'This Week'}'s Bill of {customer_id}"
             pdf = await pdf_service.generate_customer_bill_pdf(bills, title)
-            return await self.generate_pdf_result(pdf, f"Bill_{customer_id}.pdf")
+            return await self.generate_pdf_result(pdf, filename)
 
